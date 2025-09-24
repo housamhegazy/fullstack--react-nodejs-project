@@ -1,8 +1,17 @@
 const express = require('express')
 const router = express.Router()
+const CustomerModel = require('../models/customesSchema'); // استيراد نموذج المستخدم
+
+
+// ********************** تعريف دالة handleError هنا **********************
+const handleError = (res, error) => {
+  console.error('API Error:', error); // تسجيل الخطأ في الـ console لـ debugging
+  res.status(500).json({ message: 'An internal server error occurred.', error: error.message });
+};
+// **************************************************************************
 
 // المسار الافتراضي
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.send('Hello World! This is your backend API.');
 });
 
@@ -10,7 +19,7 @@ app.get('/', (req, res) => {
 // ********************** مسارات (Routes) API للمستخدمين **********************
 
 // 1. مسار لإضافة مستخدم جديد (POST)
-app.post('/api/addcustomers', async (req, res) => {
+router.post('/api/addcustomers', async (req, res) => {
   try {
     const newUser = new CustomerModel(req.body);
     await newUser.save();
@@ -25,7 +34,7 @@ app.post('/api/addcustomers', async (req, res) => {
 
 
 // 2. Route to Get All Users (GET)
-app.get('/api/allcustomers', async (req, res) => {
+router.get('/api/allcustomers', async (req, res) => {
   try {
     const users = await CustomerModel.find({}); // Fetch all users
     res.status(200).json(users); // 200 OK
@@ -34,7 +43,7 @@ app.get('/api/allcustomers', async (req, res) => {
   }
 });
 // 3. Route to Get one User (GET)
-app.get('/api/allcustomers/:id', async (req, res) => {
+router.get('/api/allcustomers/:id', async (req, res) => {
   try {
     const user = await CustomerModel.findById(req.params.id); // Fetch all users
     res.status(200).json(user); // 200 OK
@@ -43,7 +52,7 @@ app.get('/api/allcustomers/:id', async (req, res) => {
   }
 });
 // 4. Route to open one User in edit page (GET)
-app.get('/api/edit/:id', async (req, res) => {
+router.get('/api/edit/:id', async (req, res) => {
   try {
     const user = await CustomerModel.findById(req.params.id); // Fetch one customer
     res.status(200).json(user); // 200 OK
@@ -54,7 +63,7 @@ app.get('/api/edit/:id', async (req, res) => {
 
 //5--update funct
 
-app.put('/api/editcustomer/:id',async(req,res)=>{
+router.put('/api/editcustomer/:id',async(req,res)=>{
     const { id } = req.params; // جلب الـ id من المعاملات
     const updatedData = req.body; // جلب البيانات المراد تحديثها من جسم الطلب
   try{
@@ -70,7 +79,7 @@ app.put('/api/editcustomer/:id',async(req,res)=>{
   }
 })
 //6-delete function
-app.delete("/api/allcustomers/:id",async(req,res)=>{
+router.delete("/api/allcustomers/:id",async(req,res)=>{
   try {
     const user = await CustomerModel.findByIdAndDelete(req.params.id); // Fetch all users
     res.status(200).json(user); // 200 OK
@@ -79,7 +88,7 @@ app.delete("/api/allcustomers/:id",async(req,res)=>{
   }
 })
 //search function
-app.get("/api/search",async(req,res)=>{
+router.get("/api/search",async(req,res)=>{
   try {
     const searchValue = req.query.svalue
     if (!searchValue) {
@@ -103,3 +112,5 @@ app.get("/api/search",async(req,res)=>{
   } catch (error) {
     handleError(res, error);
   }})
+
+module.exports = router
