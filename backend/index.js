@@ -15,6 +15,7 @@ app.use(bodyParser.json()); // يسمح لـ Express بقراءة JSON في body
 app.use(bodyParser.urlencoded({ extended: true })); // لقراءة بيانات النموذج المشفرة
 app.use(cors()); // تفعيل CORS للسماح لـ frontend (الذي يعمل على منفذ مختلف) بالاتصال
 
+
 //اعداد الجلسات 
 app.use(session({
   secret: 'your_secret_key', // <--- قم بتغيير هذا إلى مفتاح سري قوي
