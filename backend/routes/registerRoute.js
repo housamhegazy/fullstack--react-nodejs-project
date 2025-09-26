@@ -23,14 +23,14 @@ router.post("/register", async (req, res) => {
   }
 
   if (password !== confirmPassword) {
-    return res.status(400).json({ message: "كلمتا المرور غير متطابقتين." });
+    return res.status(400).json({ message: "passwords do not match" });
   }
 
   if (password.length < 6) {
     // تحقق بسيط لطول كلمة المرور
     return res
       .status(400)
-      .json({ message: "كلمة المرور يجب أن لا تقل عن 6 أحرف." });
+      .json({ message: "password length must be at least 6 characters long " });
   }
   // يمكنك إضافة تحققات أخرى مثل تعقيد كلمة المرور وصيغة الإيميل هنا
 
@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
     if (existingUser) {
       return res
         .status(409) // 409 Conflict هو رمز حالة HTTP المناسب لتكرار مورد
-        .json({ message: "Duplicated Email !" });
+        .json({ message: "this email already registered!" });
     }
 
     const newUser = new UserSchema({ fullName, email, password });

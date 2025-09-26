@@ -18,6 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // استيراد Axios
 import Swal from "sweetalert2";
 const Home = () => {
+  
   const navigate = useNavigate();
   const [customers, setcustomers] = useState([]); // State to store fetched customers
   const [loading, setLoading] = useState(true); // State for loading indicator
@@ -57,6 +58,9 @@ const Home = () => {
       cancelButtonColor: "#3085d6", // لون الزر "إلغاء" (أزرق)
       confirmButtonText: "Yes, delete it!", // نص الزر "نعم، احذف!"
     });
+
+    
+
 
     // إذا أكد المستخدم الحذف
     if (result.isConfirmed) {
@@ -106,6 +110,7 @@ const Home = () => {
       </Box>
     );
   }
+
   if(customers.length < 1){
     return (
       <Typography

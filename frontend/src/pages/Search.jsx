@@ -137,7 +137,7 @@ function Search() {
                   <TableCell>Full Name</TableCell>
                   <TableCell>Gender</TableCell>
                   <TableCell>Country</TableCell>
-                  <TableCell>Age</TableCell> {/* Added Age column */}
+                  <TableCell>Age</TableCell>
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>

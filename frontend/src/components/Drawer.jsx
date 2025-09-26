@@ -8,10 +8,19 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import { DarkMode, GroupAdd, Logout, Settings, Sunny } from "@mui/icons-material";
+import {
+  DarkMode,
+  GroupAdd,
+  Logout,
+  Settings,
+  Sunny,
+} from "@mui/icons-material";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import HomeIcon from "@mui/icons-material/Home";
 import { useLocation, useNavigate } from "react-router";
+import { useSignOutMutation } from "../Redux/userApi";
+import { useDispatch, useSelector } from "react-redux";
+import { clearAuthUser } from "../Redux/authSlice";
 
 function ResponsiveDrawer({
   handleDrawerClose,
@@ -21,9 +30,23 @@ function ResponsiveDrawer({
   theme,
   handleTheme,
 }) {
+  // const { data: user, error, isLoading, isSuccess } = useGetUserProfileQuery();
+  //هنا انا استخدمت ال loader عشان احصل على بيانات المستخدم لكن لو هعمل تحديث بيانات المستخدم في الملف الشخصي ممكن استخدم useGetUserProfileQuery
+  // const user = useLoaderData();
+  // @ts-ignore
+  const authState = useSelector((state) => state.auth);
+  const user = authState?.user; // <--- هنا بيانات المستخدم!
+  // جلب حالة المصادقة وحالة التحميل الأولية من Redux Store
+  const isAuthenticated = authState?.isAuthenticated;
+  const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
+  const [triggerSignOut, { isLoading: isSigningOut }] = useSignOutMutation();
+  //=================================================================================
+  //=================================================================================
   const location = useLocation();
   const iconColor = theme.palette.mode === "dark" ? "inherit" : "primary";
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // console.log('User data in Drawer:', user); // تحقق من بيانات المستخدم هنا
   //list items data
   const myList = [
     {
@@ -47,7 +70,35 @@ function ResponsiveDrawer({
       pathname: "/settings",
     },
   ];
+  const handleLogout = async () => {
+    try {
+      // استدعاء الـ mutation لتسجيل الخروج. .unwrap() يرمي خطأ إذا فشل الطلب
+      await triggerSignOut().unwrap();
+      dispatch(clearAuthUser()); // <--- مسح حالة المستخدم من Redux Store
+      navigate("/signin", { replace: true }); // <--- إعادة التوجيه إلى صفحة تسجيل الدخول
+      handleDrawerClose(); // إغلاق الـ drawer بعد تسجيل الخروج
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // يمكنك هنا إضافة منطق لعرض رسالة خطأ للمستخدم إذا فشل تسجيل الخروج
+    }
 
+    //old code
+    // // إرسال طلب تسجيل الخروج إلى الخادم
+    // try {
+    //   const response = await fetch("http://localhost:3000/api/signout", {
+    //     method: "POST",
+    //     credentials: "include", // تأكد من تضمين الكوكيز
+    //   });
+    //   if (response.ok) {
+    //     // تسجيل الخروج ناجح، قم بإعادة التوجيه إلى صفحة تسجيل الدخول أو الصفحة الرئيسية
+    //     navigate("/signin"); // أو أي مسار آخر ترغب في التوجيه إليه بعد تسجيل الخروج
+    //   } else {
+    //     console.error("Failed to log out");
+    //   }
+    // } catch (error) {
+    //   console.error("Error during logout:", error);
+    // }
+  };
   //drawer content
   const drawer = (
     <div>
@@ -59,39 +110,55 @@ function ResponsiveDrawer({
       >
         {theme.palette.mode === "dark" ? <Sunny /> : <DarkMode />}
       </IconButton>
-      <Divider />
       <List>
-        {myList.map((item, index) => {
-          return (
-            <ListItem
-              sx={{
-                backgroundColor:
-                  location.pathname === item.pathname
-                    ? theme.palette.action.selected
-                    : "inherit",
-              }}
-              key={index}
-              onClick={() => {
-                navigate(item.pathname);
-                handleDrawerClose()
-              }}
-              disablePadding
-            >
+        <Divider />
+        {isLoadingAuth && (
+          <ListItem sx={{ mt: 2, mb: 1, flexDirection: "column", alignItems: "center" }}>
+            <ListItemText primary="Loading..." />
+          </ListItem>
+        )}
+        {!isLoadingAuth && !isSigningOut && user && (
+          <ListItem
+            sx={{ mt: 2, mb: 1, flexDirection: "column", alignItems: "center" }}
+          >
+            <ListItemText primary={user.fullName} />
+          </ListItem>
+        )}
+        {isAuthenticated && (
+          <>
+            {myList.map((item, index) => {
+              return (
+                <ListItem
+                  sx={{
+                    backgroundColor:
+                      location.pathname === item.pathname
+                        ? theme.palette.action.selected
+                        : "inherit",
+                  }}
+                  key={index}
+                  onClick={() => {
+                    navigate(item.pathname);
+                    handleDrawerClose();
+                  }}
+                  disablePadding
+                >
+                  <ListItemButton>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.title} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+            <ListItem onClick={handleLogout} sx={{ mt: 5, px: 0 }}>
               <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.title} />
+                <ListItemIcon>
+                  <Logout color={"error"} />
+                </ListItemIcon>
+                <ListItemText primary="Logout" sx={{ color: "red" }} />
               </ListItemButton>
             </ListItem>
-          );
-        })}
-        <ListItem sx={{ mt: 5, px: 0 }}>
-          <ListItemButton>
-            <ListItemIcon>
-              <Logout color={"error"} />
-            </ListItemIcon>
-            <ListItemText primary="Logout" sx={{ color: "red" }} />
-          </ListItemButton>
-        </ListItem>
+          </>
+        )}
       </List>
     </div>
   );

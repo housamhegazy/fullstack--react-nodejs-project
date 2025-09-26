@@ -13,8 +13,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Search } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const AppBarComponent = ({ handleDrawerToggle, drawerWidth }) => {
+  // @ts-ignore
+  const authState = useSelector((state) => state.auth);
+  const user = authState?.user; // <--- هنا بيانات المستخدم!
+  const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
+  const isAuthenticated = authState?.isAuthenticated;
+//===========================================================================
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [helperText, setHelperText] = useState("");
@@ -63,86 +70,96 @@ const AppBarComponent = ({ handleDrawerToggle, drawerWidth }) => {
           >
             Customer Dashboard
           </Link>
-          <Button
-            color="inherit"
-            variant="text"
-            onClick={() => navigate("/signin")}
-          >
-            Signin
-          </Button>
-          <Button
-            color="inherit"
-            variant="text"
-            onClick={() => navigate("/register")}
-          >
-            Register
-          </Button>
+          {/* conditional rendering based on user authentication */}
+          {!isAuthenticated && !isLoadingAuth && (
+            <>
+              <Button
+                color="inherit"
+                variant="text"
+                onClick={() => navigate("/signin")}
+              >
+                Signin
+              </Button>
+
+              <Button
+                color="inherit"
+                variant="text"
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </Button>
+            </>
+          )}
+
           {/* search  */}
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              mr: 6,
-              
-              // قد تحتاج لضبط الهوامش أو العرض هنا لتناسب التصميم العام للـ AppBar
-            }}
-            component={"form"}
-            onSubmit={handleSearchSubmit}
-          >
-            <TextField
-              onChange={handleOnchange}
-              // لا نحتاج لـ sx={{ mr: 2 }} هنا لأنهما أصبحا مدمجين
-              id="integrated-search" // id جديد لهذا الـ TextField
-              label="Search" // تسمية أقصر مناسبة لدمج الزر
-              type="search"
-              value={searchValue}
-              variant="outlined" // Filled أو Outlined تبدو أفضل للدمج
-              helperText={helperText}
-              error={IsError}
-              InputLabelProps={{
-                sx: {
-                  color: "white", // <--- Custom color for the label
-                  fontWeight: "bold",
-                  // You can also style different states, e.g., when focused:
-                  // '&.Mui-focused': {
-                  //   color: 'darkblue',
-                  // },
-                  // // For the label in error state (overriding default red)
-                  // '&.Mui-error': {
-                  //   color: 'orange',
-                  // },
-                },
-              }}
-              // إضافة InputProps هنا لدمج الزر
-              InputProps={{
-                // Adornment في نهاية حقل الإدخال
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      type="submit" // لا يزال يمكن أن يكون type="submit" داخل form
-                      aria-label="search customer"
-                      onClick={handleSearchSubmit} // استدعاء الدالة هنا لزر الأيقونة
-                      edge="end"
-                      sx={{ mr: -1.5 }} // لضبط المسافة بين الأيقونة وحافة حقل النص
-                    >
-                      <Search /> {/* أيقونة البحث */}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              // إذا كنت تريد أن يكون حقل البحث أكبر قليلاً
+          {isAuthenticated && (
+            <Box
               sx={{
-                "& .MuiInputBase-input": {
-                  color: "white", // Or any color you want
-                  opacity: 1, // To ensure it's not faded out (default browser behavior)
-                },
-                
-                width: { xs: "150px", sm: "200px", md: "250px" }, // مثال لتعديل العرض
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                mr: 6,
+
+                // قد تحتاج لضبط الهوامش أو العرض هنا لتناسب التصميم العام للـ AppBar
               }}
-            />
-          </Box>
+              component={"form"}
+              onSubmit={handleSearchSubmit}
+            >
+              <TextField
+                onChange={handleOnchange}
+                // لا نحتاج لـ sx={{ mr: 2 }} هنا لأنهما أصبحا مدمجين
+                id="integrated-search" // id جديد لهذا الـ TextField
+                label="Search" // تسمية أقصر مناسبة لدمج الزر
+                type="search"
+                value={searchValue}
+                variant="outlined" // Filled أو Outlined تبدو أفضل للدمج
+                helperText={helperText}
+                error={IsError}
+                InputLabelProps={{
+                  sx: {
+                    color: "white", // <--- Custom color for the label
+                    fontWeight: "bold",
+                    // You can also style different states, e.g., when focused:
+                    // '&.Mui-focused': {
+                    //   color: 'darkblue',
+                    // },
+                    // // For the label in error state (overriding default red)
+                    // '&.Mui-error': {
+                    //   color: 'orange',
+                    // },
+                  },
+                }}
+                // إضافة InputProps هنا لدمج الزر
+                InputProps={{
+                  // Adornment في نهاية حقل الإدخال
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        type="submit" // لا يزال يمكن أن يكون type="submit" داخل form
+                        aria-label="search customer"
+                        onClick={handleSearchSubmit} // استدعاء الدالة هنا لزر الأيقونة
+                        edge="end"
+                        sx={{ mr: -1.5 }} // لضبط المسافة بين الأيقونة وحافة حقل النص
+                      >
+                        <Search /> {/* أيقونة البحث */}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                // إذا كنت تريد أن يكون حقل البحث أكبر قليلاً
+                sx={{
+                  "& .MuiInputBase-input": {
+                    color: "white", // Or any color you want
+                    opacity: 1, // To ensure it's not faded out (default browser behavior)
+                  },
+
+                  width: { xs: "150px", sm: "200px", md: "250px" }, // مثال لتعديل العرض
+                }}
+              />
+            </Box>
+          )}
+
           <Typography
             sx={{
               "&:hover": {
@@ -156,7 +173,7 @@ const AppBarComponent = ({ handleDrawerToggle, drawerWidth }) => {
             variant="body1"
             color="inherit"
           >
-            H.Hegazy
+            {user ? user.fullName : ""}
           </Typography>
           <Avatar
             sx={{ cursor: "pointer" }}

@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const CustomerModel = require('../models/customesSchema'); // استيراد نموذج المستخدم
 
-
 // ********************** تعريف دالة handleError هنا **********************
 const handleError = (res, error) => {
   console.error('API Error:', error); // تسجيل الخطأ في الـ console لـ debugging

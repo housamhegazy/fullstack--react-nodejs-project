@@ -6,28 +6,51 @@ const app = express()
 const port = 3000
 const session = require('express-session'); // <--- إضافة هذا
 
+// <--- استيراد Middleware التحقق
+const isAuthenticated = require('./middleware/authMiddleware');
+
 const allRoutes = require('./routes/allRoutes')
 const registerRoute = require('./routes/registerRoute')
+const signinRoute = require('./routes/signinRoute')
+const getUserRoute = require('./routes/GetUserRoute')
+const signoutRoute = require('./routes/signoutRoute')
+// const MongoStore = require('connect-mongo'); // <--- إضافة هذا
 
+// ********************** Middleware **********************
 
 // Middleware
 app.use(bodyParser.json()); // يسمح لـ Express بقراءة JSON في body الطلبات
 app.use(bodyParser.urlencoded({ extended: true })); // لقراءة بيانات النموذج المشفرة
-app.use(cors()); // تفعيل CORS للسماح لـ frontend (الذي يعمل على منفذ مختلف) بالاتصال
+app.use(cors({
+  origin: 'http://localhost:5173', // ضع هنا عنوان الفرونتند
+  credentials: true // يسمح بإرسال الكوكيز
+})); // تفعيل CORS للسماح لـ frontend (الذي يعمل على منفذ مختلف) بالاتصال بـ backend
 
+// ********************** اعداد الجلسات **********************
 
-//اعداد الجلسات 
 app.use(session({
-  secret: 'your_secret_key', // <--- قم بتغيير هذا إلى مفتاح سري قوي
+  secret: 'your_secret_key',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // Set to true if using https
+  // تأكد أنك تستخدم MongoStore هنا كما في الكود السابق لتخزين الجلسات
+  // store: MongoStore.create({ mongoUrl: 'mongodb+srv://geohousam_db_user:UAc4KjEnIs8qVEEJ@addcustomercluster.xoewuxa.mongodb.net/all-data?retryWrites=true&w=majority&appName=addcustomercluster' }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true في الإنتاج، false في التطوير
+    httpOnly: true, // يوصى به دائمًا
+    maxAge: 1000 * 60 * 60 * 24, // يوم واحد
+    sameSite: 'Lax', // <--- قم بتغيير 'strict' إلى 'Lax'
+  }
 }));
+app.use('', registerRoute)
+app.use('', signinRoute)
+app.use('', signoutRoute)
+app.use('',isAuthenticated, getUserRoute)
+app.use('',isAuthenticated,allRoutes)
 // ...
 // ********************** الاتصال بـ MongoDB **********************
 mongoose.connect('mongodb+srv://geohousam_db_user:UAc4KjEnIs8qVEEJ@addcustomercluster.xoewuxa.mongodb.net/all-data?retryWrites=true&w=majority&appName=addcustomercluster', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  
+  // useUnifiedTopology: true,
   // useCreateIndex: true, // Mongoose 6+ لا يحتاج لهذا الخيار
   // useFindAndModify: false // Mongoose 6+ لا يحتاج لهذا الخيار
 })
@@ -43,5 +66,3 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-app.use('', allRoutes)
-app.use('', registerRoute)

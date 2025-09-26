@@ -32,11 +32,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
-  
-  createdAt: {
+  lastLogin: { // <--- NEW FIELD: lastLogin
     type: Date,
-    default: Date.now,
+    default: null // It will be null until the first successful login
   },
+}, {
+    timestamps: true // لإضافة حقلي createdAt و updatedAt تلقائياً
 });
 
 // Middleware لتشفير كلمة المرور قبل حفظ المستخدم

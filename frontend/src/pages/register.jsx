@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Box,
@@ -12,8 +12,20 @@ import {
 import AppRegistrationOutlinedIcon from "@mui/icons-material/AppRegistrationOutlined"; // أيقونة للتسجيل
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetUserProfileQuery } from "../Redux/userApi";
+import { setAuthUser } from "../Redux/authSlice";
 
 function SignUp() {
+  // @ts-ignore
+  const authState = useSelector((state) => state.auth);
+  // const user = authState?.user; // <--- هنا بيانات المستخدم!
+  // جلب حالة المصادقة وحالة التحميل الأولية من Redux Store
+  const isAuthenticated = authState?.isAuthenticated;
+  const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
+
+  //=================================================================================
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +34,18 @@ function SignUp() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { refetch } = useGetUserProfileQuery();
+
+  useEffect(() => {
+    // تحقق من أن التحميل الأولي قد انتهى
+    if (!isLoadingAuth && isAuthenticated) {
+      // إذا كان المستخدم مصادقًا عليه، قم بإعادة توجيهه إلى الصفحة الرئيسية
+      console.log("User is authenticated, redirecting from signin page.");
+      navigate("/");
+    }
+  }, [isAuthenticated, isLoadingAuth, navigate]);
+
   const validateEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
   };
@@ -40,17 +63,17 @@ function SignUp() {
       return;
     }
     if (!validateEmail(email)) {
-      setError("الرجاء إدخال بريد إلكتروني صالح.");
+      setError("please enter valid email");
       setLoading(false);
       return;
     }
     if (password.length < 6) {
-      setError("كلمة المرور يجب أن لا تقل عن 6 أحرف.");
+      setError("password length must be at least 6 characters long");
       setLoading(false);
       return;
     }
     if (password !== confirmPassword) {
-      setError("كلمتا المرور غير متطابقتين.");
+      setError("passwords do not match");
       setLoading(false);
       return;
     }
@@ -60,40 +83,49 @@ function SignUp() {
         fullName,
         email,
         password,
-        confirmPassword
+        confirmPassword,
       });
 
-        // إذا كانت الاستجابة JSON:
+      // إذا كانت الاستجابة JSON:
       if (response.data.message) {
         setSuccess(response.data.message);
+        dispatch(setAuthUser(response.data)); // <--- تحديث Redux Auth State
+        await refetch();
       } else {
-        setSuccess("تم تسجيل حسابك بنجاح! جاري التوجيه إلى صفحة تسجيل الدخول...");
+        setSuccess("successfully registered");
+        await refetch(); // إعادة جلب بيانات المستخدم من الباكند
       }
 
       setTimeout(() => {
-        navigate("/signin");
+        navigate("/");
       }, 1500); // تأخير بسيط قبل إعادة التوجيه
     } catch (apiError) {
-            setLoading(false); // تأكد من إيقاف حالة التحميل
-if (apiError.response) {
+      setLoading(false); // تأكد من إيقاف حالة التحميل
+      if (apiError.response) {
         // الـ API أرسل استجابة خطأ (مثل 400, 409, 500)
         const status = apiError.response.status;
         const errorMessage = apiError.response.data.message;
 
-        if (status === 409) { // 409 Conflict - هذا يشير إلى تكرار البريد الإلكتروني
-          setError(errorMessage || "هذا البريد الإلكتروني مسجل بالفعل.");
-        } else if (status === 400) { // 400 Bad Request - قد يكون بسبب بيانات غير صالحة
-          setError(errorMessage || "الرجاء التحقق من البيانات المدخلة.");
+        if (status === 409) {
+          // 409 Conflict - هذا يشير إلى تكرار البريد الإلكتروني
+          setError(errorMessage || "this email already registered");
+        } else if (status === 400) {
+          // 400 Bad Request - قد يكون بسبب بيانات غير صالحة
+          setError(errorMessage || "please check your input data");
         } else {
           // أي أخطاء أخرى من الـ Backend
-          setError(errorMessage || "حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.");
+          setError(
+            errorMessage || "An unexpected error occurred. Please try again."
+          );
         }
       } else if (apiError.request) {
         // لم يتم تلقي أي استجابة من الـ API (مثل مشكلة في الشبكة)
-        setError("لا يمكن الاتصال بالخادم. الرجاء التحقق من اتصالك بالإنترنت.");
+        setError(
+          "  Network error: Unable to reach the server. Please try again later."
+        );
       } else {
         // خطأ آخر حدث أثناء إعداد الطلب
-        setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
+        setError("  An error occurred. Please try again.");
       }
       console.error("Register API error:", apiError);
     } finally {
@@ -122,7 +154,7 @@ if (apiError.response) {
           <AppRegistrationOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
-          إنشاء حساب جديد
+          Register
         </Typography>
         {error && (
           <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
@@ -161,9 +193,7 @@ if (apiError.response) {
             onChange={(e) => setEmail(e.target.value)}
             error={!!error && !validateEmail(email)}
             helperText={
-              !!error && !validateEmail(email)
-                ? "الرجاء إدخال بريد إلكتروني صالح"
-                : ""
+              !!error && !validateEmail(email) ? "please enter valid email" : ""
             }
           />
           <TextField
@@ -180,7 +210,7 @@ if (apiError.response) {
             error={!!error && password.length < 6}
             helperText={
               !!error && password.length < 6
-                ? "كلمة المرور يجب أن لا تقل عن 6 أحرف"
+                ? "password must be at least 6 characters long"
                 : ""
             }
           />
@@ -189,7 +219,7 @@ if (apiError.response) {
             required
             fullWidth
             name="confirmPassword"
-            label="تأكيد كلمة المرور"
+            label="confirm Password"
             type="password"
             id="confirmPassword"
             autoComplete="new-password"
@@ -198,7 +228,7 @@ if (apiError.response) {
             error={!!error && password !== confirmPassword}
             helperText={
               !!error && password !== confirmPassword
-                ? "كلمتا المرور غير متطابقتين"
+                ? "passwords do not match"
                 : ""
             }
           />
@@ -209,7 +239,7 @@ if (apiError.response) {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            {loading ? "جاري التسجيل..." : "تسجيل"}
+            {loading ? "loading ..." : "register"}
           </Button>
           <Box display="flex" justifyContent="center">
             <Link
@@ -218,7 +248,7 @@ if (apiError.response) {
                 color: `${theme.palette.mode === "dark" ? "white" : "black"}`,
               }}
             >
-              {"لديك حساب بالفعل؟ سجل الدخول من هنا"}
+              {"you have an account? Sign In"}
             </Link>
           </Box>
         </Box>
