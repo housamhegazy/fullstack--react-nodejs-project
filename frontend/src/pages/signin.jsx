@@ -88,15 +88,12 @@ function SignIn() {
         dispatch(setAuthUser(userData));     // <--- تحديث Redux Auth State
             await refetch(); // إعادة جلب بيانات المستخدم من الباكند
         // تأخير بسيط لرؤية رسالة النجاح قبل التنقل
-        navigate("/");
-        
+        navigate("/");        
         // تسجيل الدخول ناجح
       } else {
         setSuccess("successfully registered");
          // إذا لم تكن هناك رسالة، يمكن افتراض رسالة افتراضي
             await refetch(); // إعادة جلب بيانات المستخدم من الباكند
-
-
         navigate("/");
       }
     } catch (apiError) {

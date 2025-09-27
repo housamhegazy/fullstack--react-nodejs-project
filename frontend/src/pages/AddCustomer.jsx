@@ -228,16 +228,9 @@ const country_list = [
 ];
 
 function AddCustomer() {
-
     const navigate = useNavigate(); // تهيئة useNavigate
-  
     const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
-  
-    useEffect(() => {
-      if (!user && !isLoading) {
-        navigate("/signin");
-      }
-    }, [isSuccess, user, navigate, isLoading]);
+
     
   const [formData, setFormData] = useState({
     firstName: "",
@@ -308,7 +301,13 @@ function AddCustomer() {
       // إرسال البيانات إلى الـ backend
       await axios.post(
         "http://localhost:3000/api/addcustomers",
-        formData
+        formData,
+        // إضافة التوكن (بيانات المستخدم الحالي ) إلى رأس الطلب إذا كان موجودًا
+        user && user.token ? {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        } : {}
       );
       setSuccess("User added successfully!");
       // مسح النموذج بعد الإضافة الناجحة

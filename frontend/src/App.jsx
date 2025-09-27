@@ -20,7 +20,6 @@ import { useGetUserProfileQuery } from "./Redux/userApi";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import {authLoader} from "./components/authLoader"; // استيراد الـ loader لصفحة تسجيل الدخول
 function App() {
-
   const dispatch = useDispatch();
 
   // RTK Query hook لجلب بيانات الملف الشخصي للمستخدم
@@ -71,8 +70,8 @@ function App() {
       Component: Root,
       // errorElement: <Err_404Page />, // <--- يمكنك إضافة عنصر خطأ عام هنا إذا أردت
       children: [
-        { index: true, Component: Home}, // <--- إضافة الـ loader هنا أيضًا
-        { path: "profile", Component: Profile }, // <--- إضافة الـ loader هنا أيضًا
+        { index: true, Component: Home,loader: authLoader}, // <--- إضافة الـ loader هنا أيضًا
+        { path: "profile", Component: Profile,loader: authLoader }, // <--- إضافة الـ loader هنا أيضًا
         // يمكنك أيضًا إضافة errorElement هنا لـ Profile إذا أردت معالجة الأخطاء الخاصة به
 
         { path: "edite/:id", Component: Edite, loader: authLoader },

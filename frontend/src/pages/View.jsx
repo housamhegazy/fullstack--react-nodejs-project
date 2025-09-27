@@ -10,9 +10,12 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { format, formatDistanceToNow } from 'date-fns'; // لاستخدام تنسيق التاريخ
 import axios from 'axios'; 
+import { useGetUserProfileQuery } from '../Redux/userApi';
 
 
 function View() {
+      const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+  
   const {id} = useParams()
   const [customer, setcustomer] = useState(null); // State to store fetched customers
   const [loading, setLoading] = useState(true); // State for loading indicator
@@ -24,7 +27,12 @@ function View() {
     setError(null); // Clear previous errors
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/allcustomers/${id}`
+        `http://localhost:3000/api/allcustomers/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`, // إرسال التوكن في رأس الطلب
+          },
+        }
       );
       setcustomer(response.data);
     } catch (err) {

@@ -20,8 +20,11 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { useGetUserProfileQuery } from "../Redux/userApi";
 
 function Search() {
+      const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+
   const location = useLocation(); // لتغيير قيمة البحث في عنوان ال url اثناء تغيير البحث
   const [searchResults, setSearchResults] = useState([]); // نتائج البحث التي تم جلبها من الباك اند
   const [loading, setLoading] = useState(true);
@@ -46,7 +49,9 @@ function Search() {
           `http://localhost:3000/api/search?svalue=${encodeURIComponent(
             searchTerm || ""
           )}`
-        );
+        ,{
+            headers: { Authorization: `Bearer ${user.token}` },
+          } );
         // <--- التحقق هنا مما إذا كانت الاستجابة تحتوي على 'message'
         if (response.data && response.data.message) {
           setBackendMessage(response.data.message);
@@ -65,7 +70,7 @@ function Search() {
     };
 
     fetchSearchResults();
-  }, [location.search]);
+  }, [location.search, user.token]);
   if (loading) {
     return (
       <Box
@@ -167,7 +172,7 @@ function Search() {
                       </Button>
                       <Button
                         component={RouterLink}
-                        to={`/edit/${user._id}`} // Link to a dummy edit page
+                        to={`/edite/${user._id}`} // Link to a dummy edit page
                         variant="contained"
                         color="primary"
                         size="small"

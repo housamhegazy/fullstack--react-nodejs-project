@@ -19,8 +19,9 @@ import { setAuthUser } from "../Redux/authSlice";
 function SignUp() {
   // @ts-ignore
   const authState = useSelector((state) => state.auth);
+  //===========================================================================
+  //  جلب حالة المصادقة وحالة التحميل الأولية من Redux Store
   // const user = authState?.user; // <--- هنا بيانات المستخدم!
-  // جلب حالة المصادقة وحالة التحميل الأولية من Redux Store
   const isAuthenticated = authState?.isAuthenticated;
   const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
 

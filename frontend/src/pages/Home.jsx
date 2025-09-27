@@ -17,8 +17,10 @@ import { Delete, Edit, RemoveRedEye } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // استيراد Axios
 import Swal from "sweetalert2";
+import { useGetUserProfileQuery } from "../Redux/userApi";
 const Home = () => {
-  
+  //احضرت بيانات المستخدم حتى يتم ارسالها عند طلب عرض بيانات العملاء
+    const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
   const navigate = useNavigate();
   const [customers, setcustomers] = useState([]); // State to store fetched customers
   const [loading, setLoading] = useState(true); // State for loading indicator
@@ -30,7 +32,10 @@ const Home = () => {
     setError(null); // Clear previous errors
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/allcustomers"
+        "http://localhost:3000/api/allcustomers",{ headers: {
+          Authorization: `Bearer ${user.token}`, // إرسال التوكن في رأس الطلب
+        },
+      }
       );
       setcustomers(response.data);
     } catch (err) {
@@ -59,14 +64,14 @@ const Home = () => {
       confirmButtonText: "Yes, delete it!", // نص الزر "نعم، احذف!"
     });
 
-    
-
-
     // إذا أكد المستخدم الحذف
     if (result.isConfirmed) {
       try {
         await axios.delete(
-          `http://localhost:3000/api/allcustomers/${id}`
+          `http://localhost:3000/api/allcustomers/${id}`,{ headers: {
+            Authorization: `Bearer ${user.token}`, // إرسال التوكن في رأس الطلب
+          },  
+        }
         );
         fetchcustomers();
         // عرض رسالة نجاح بعد الحذف

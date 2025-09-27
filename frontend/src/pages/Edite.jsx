@@ -18,6 +18,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom"; // لتجنب إعادة تحميل الصفحة للروابط
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useGetUserProfileQuery } from "../Redux/userApi";
 
 // قائمة الدول (ثابتة للعرض)
 const country_list = [
@@ -229,6 +230,8 @@ const country_list = [
 ];
 
 function Edite() {
+  const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+
   const { id } = useParams();
   const [customer, setcustomer] = useState({
     _id: "",
@@ -257,7 +260,9 @@ function Edite() {
     setError(null);
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/edit/${id}`);
+      const response = await axios.get(`http://localhost:3000/api/edit/${id}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
       setcustomer(response.data);
     } catch (err) {
       console.error("Failed to fetch customer:", err);
@@ -333,7 +338,9 @@ function Edite() {
       return;
     }
     try {
-      await axios.put(`http://localhost:3000/api/editcustomer/${id}`, customer);
+      await axios.put(`http://localhost:3000/api/editcustomer/${id}`, customer, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
       setLoadingEdit(false);
       setSuccess("user updated succesfully");
       // Swal.fire({
@@ -379,7 +386,9 @@ function Edite() {
       setDatatError(null);
       setSuccess(null);
       try {
-        await axios.delete(`http://localhost:3000/api/allcustomers/${id}`);
+        await axios.delete(`http://localhost:3000/api/allcustomers/${id}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
         // عرض رسالة نجاح بعد الحذف
         Swal.fire("Deleted!", "The customer has been deleted.", "success");
         navigate("/");
