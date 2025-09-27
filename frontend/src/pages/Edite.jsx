@@ -281,7 +281,7 @@ function Edite() {
       setLoading(false);
       setError("No customer ID provided in the URL.");
     }
-  }, []);
+  }, [id]);
 
   // دالة لتحديث حالة النموذج عند تغيير حقول الإدخال
   const handleChange = (event) => {
@@ -338,9 +338,13 @@ function Edite() {
       return;
     }
     try {
-      await axios.put(`http://localhost:3000/api/editcustomer/${id}`, customer, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
+      await axios.put(
+        `http://localhost:3000/api/editcustomer/${id}`,
+        customer,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
       setLoadingEdit(false);
       setSuccess("user updated succesfully");
       // Swal.fire({
@@ -522,6 +526,15 @@ function Edite() {
                     ? "first name required"
                     : ""
                 }
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -539,6 +552,15 @@ function Edite() {
                 helperText={
                   !!dataError && !customer.lastName ? "last name required" : ""
                 }
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -556,6 +578,15 @@ function Edite() {
                 helperText={
                   !!dataError && !customer.email ? " email required" : ""
                 }
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -582,6 +613,15 @@ function Edite() {
                     ? "correct phone Number required"
                     : ""
                 }
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -612,6 +652,15 @@ function Edite() {
                     ? "Age should be between 18 and 100 "
                     : ""
                 }
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>

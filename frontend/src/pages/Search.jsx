@@ -21,9 +21,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { useGetUserProfileQuery } from "../Redux/userApi";
+import Swal from "sweetalert2";
 
 function Search() {
-      const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+  const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
 
   const location = useLocation(); // لتغيير قيمة البحث في عنوان ال url اثناء تغيير البحث
   const [searchResults, setSearchResults] = useState([]); // نتائج البحث التي تم جلبها من الباك اند
@@ -32,45 +33,79 @@ function Search() {
   const [backendMessage, setBackendMessage] = useState(null); // <--- إضافة حالة لرسالة الـ Backend
   const [currentSearchValue, setCurrentSearchValue] = useState(""); //input value
 
-  useEffect(() => {
+  //===============================================================================
+  //FETCH SEARCH Result
+  const fetchSearchResults = async () => {
     const params = new URLSearchParams(location.search); // استخراج query parameters
     const searchTerm = params.get("svalue"); // الحصول على قيمة المعامل 'svalue'
     setCurrentSearchValue(searchTerm || ""); // لتخزين وعرض مصطلح البحث الحالي
-
-    //FETCH SEARCH Result
-    const fetchSearchResults = async () => {
-      setBackendMessage(null); // <--- مسح الرسالة السابقة عند جلب بيانات جديدة
-      setSearchResults([]); // مسح النتائج السابقة
-      setLoading(true);
-      setError(null);
-      try {
-        // إذا لم يكن هناك searchTerm، Backend الخاص بك سيعالج ذلك (إرجاع الكل أو لا شيء)
-        const response = await axios.get(
-          `http://localhost:3000/api/search?svalue=${encodeURIComponent(
-            searchTerm || ""
-          )}`
-        ,{
-            headers: { Authorization: `Bearer ${user.token}` },
-          } );
-        // <--- التحقق هنا مما إذا كانت الاستجابة تحتوي على 'message'
-        if (response.data && response.data.message) {
-          setBackendMessage(response.data.message);
-        } else {
-          setSearchResults(response.data);
+    setBackendMessage(null); // <--- مسح الرسالة السابقة عند جلب بيانات جديدة
+    setSearchResults([]); // مسح النتائج السابقة
+    setLoading(true);
+    setError(null);
+    try {
+      // إذا لم يكن هناك searchTerm، Backend الخاص بك سيعالج ذلك (إرجاع الكل أو لا شيء)
+      const response = await axios.get(
+        `http://localhost:3000/api/search?svalue=${encodeURIComponent(
+          searchTerm || ""
+        )}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
         }
-      } catch (err) {
-        console.error("Failed to fetch search results:", err);
-        setError(
-          err.response?.data?.message ||
-            "Failed to load search results. Please try again."
-        );
-      } finally {
-        setLoading(false);
+      );
+      // <--- التحقق هنا مما إذا كانت الاستجابة تحتوي على 'message'
+      if (response.data && response.data.message) {
+        setBackendMessage(response.data.message);
+      } else {
+        setSearchResults(response.data);
       }
-    };
-
+    } catch (err) {
+      console.error("Failed to fetch search results:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to load search results. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchSearchResults();
-  }, [location.search, user.token]);
+  }, [location.search]);
+
+  // delete function
+  const deleteFunc = async (id) => {
+    // عرض رسالة التأكيد من SweetAlert2
+    const result = await Swal.fire({
+      title: "Are you sure?", // عنوان الرسالة
+      text: "You won't be able to revert this!", // نص الرسالة
+      icon: "warning", // أيقونة التحذير
+      showCancelButton: true, // إظهار زر الإلغاء
+      confirmButtonColor: "#d33", // لون الزر "نعم، احذف!" (أحمر)
+      cancelButtonColor: "#3085d6", // لون الزر "إلغاء" (أزرق)
+      confirmButtonText: "Yes, delete it!", // نص الزر "نعم، احذف!"
+    });
+
+    // إذا أكد المستخدم الحذف
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/allcustomers/${id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`, // إرسال التوكن في رأس الطلب
+          },
+        });
+        fetchSearchResults();
+        // عرض رسالة نجاح بعد الحذف
+        Swal.fire("Deleted!", "The customer has been deleted.", "success");
+      } catch (err) {
+        console.error("Failed to delete customer:", err);
+        setError("Failed to delete customer. Please try again later.");
+      } finally {
+        console.log("done");
+      }
+    }
+  };
+
   if (loading) {
     return (
       <Box
@@ -182,6 +217,7 @@ function Search() {
                         <EditIcon fontSize="small" />
                       </Button>
                       <Button
+                        onClick={() => deleteFunc(user._id)}
                         variant="contained"
                         color="error"
                         size="small"

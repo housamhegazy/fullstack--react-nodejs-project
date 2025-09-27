@@ -17,7 +17,7 @@ import axios from "axios"; // استيراد Axios
 import Swal from "sweetalert2"; // لاستخدام SweetAlert2
 import { useNavigate } from "react-router-dom";
 import { useGetUserProfileQuery } from "../Redux/userApi";
-
+import { useTheme } from "@mui/material/styles";
 // قائمة الدول كما كانت في كود EJS
 const country_list = [
   "Afghanistan",
@@ -231,7 +231,7 @@ function AddCustomer() {
     const navigate = useNavigate(); // تهيئة useNavigate
     const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
 
-    
+    const theme = useTheme();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -410,6 +410,17 @@ function AddCustomer() {
                 helperText={
                   !!error && !formData.firstName ? "first name required" : ""
                 }
+              
+                // التعديل المطلوب: تغيير لون الـ Label
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -427,6 +438,16 @@ function AddCustomer() {
                 helperText={
                   !!error && !formData.lastName ? "last name required" : ""
                 }
+                // التعديل المطلوب: تغيير لون الـ Label
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -446,6 +467,16 @@ function AddCustomer() {
                     ? "email required"
                     : ""
                 }
+                // التعديل المطلوب: تغيير لون الـ Label
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -472,6 +503,16 @@ function AddCustomer() {
                     ? "correct phone Number required"
                     : ""
                 }
+                // التعديل المطلوب: تغيير لون الـ Label
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>
@@ -502,6 +543,16 @@ function AddCustomer() {
                     ? "Age should be between 18 and 100 "
                     : ""
                 }
+                // التعديل المطلوب: تغيير لون الـ Label
+                InputLabelProps={{
+                    sx: {
+                        color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص الافتراضي للـ Label (أزرق غامق)
+                        // يمكنك إضافة تغيير اللون عند التركيز هنا
+                        '&.Mui-focused': {
+                            color: (theme) => theme.palette.mode === 'dark' ? '#ffffffff' : '#02083dff', // لون النص عند التركيز
+                        },
+                    },
+                }}
               />
             </Grid>
             <Grid>

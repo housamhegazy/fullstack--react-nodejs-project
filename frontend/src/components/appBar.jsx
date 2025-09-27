@@ -52,24 +52,17 @@ const AppBarComponent = ({ handleDrawerToggle, drawerWidth }) => {
     <Box component={"header"}>
       <AppBar position="static">
         <Toolbar sx={{ marginLeft: { sm: `${drawerWidth}px` } }}>
-          <IconButton onClick={handleDrawerToggle}>
+          <IconButton sx={{ color: "white", display: { sm: "none" } }} onClick={handleDrawerToggle}>
             <MenuIcon
               fontSize="large"
-              sx={{ color: "white", display: { sm: "none" } }}
             />
           </IconButton>
-          <Link
-            to="/"
-            color="inherit"
-            // underline="none"
+          <Box
             style={{
               flexGrow: 1,
-              fontSize: "1rem",
-              color: "inherit",
             }}
           >
-            Customer Dashboard
-          </Link>
+          </Box>
           {/* conditional rendering based on user authentication */}
           {!isAuthenticated && !isLoadingAuth && (
             <>
@@ -153,28 +146,20 @@ const AppBarComponent = ({ handleDrawerToggle, drawerWidth }) => {
                     color: "white", // Or any color you want
                     opacity: 1, // To ensure it's not faded out (default browser behavior)
                   },
+                  margin:"5px 0",
+                  width: { xs: "150px", sm: "150px", md: "250px" }, // مثال لتعديل العرض
 
-                  width: { xs: "150px", sm: "200px", md: "250px" }, // مثال لتعديل العرض
                 }}
               />
             </Box>
           )}
 
-          <Typography
-            sx={{
-              "&:hover": {
-                color: "black",
-                cursor: "pointer",
-                transition: "color 0.3s",
-              },
-            }}
-            mr={2}
-            component={"p"}
-            variant="body1"
-            color="inherit"
+          <Link
+            to={"/profile"}
+            style={{ textDecoration: "none", color: "inherit", marginRight: 10 }}
           >
             {user ? user.fullName : ""}
-          </Typography>
+          </Link>
           <Avatar
             sx={{ cursor: "pointer" }}
             alt="Remy Sharp"

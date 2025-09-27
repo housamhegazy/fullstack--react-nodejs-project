@@ -17,7 +17,7 @@ import {
 } from "@mui/icons-material";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import HomeIcon from "@mui/icons-material/Home";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useSignOutMutation } from "../Redux/userApi";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAuthUser } from "../Redux/authSlice";
@@ -102,7 +102,24 @@ function ResponsiveDrawer({
   //drawer content
   const drawer = (
     <div>
-      <Toolbar />
+      <Box sx={{height:"80px",display:"flex",justifyContent:"center",alignItems:"center"}}>
+        <Link
+          to="/"
+          // underline="none"
+          style={{
+            height:"100%",
+            fontSize: "1rem",
+            color: "white",
+            display:"flex",
+            justifyContent:"center",
+            alignItems:"center"
+          }}
+        >
+          Customer Dashboard
+        </Link>
+      </Box>
+          <Divider/>
+      {/* <Toolbar /> */}
       <IconButton
         onClick={handleTheme}
         sx={{ mx: "auto", display: "block" }}
@@ -113,17 +130,13 @@ function ResponsiveDrawer({
       <List>
         <Divider />
         {isLoadingAuth && (
-          <ListItem sx={{ mt: 2, mb: 1, flexDirection: "column", alignItems: "center" }}>
-            <ListItemText primary="Loading..." />
-          </ListItem>
-        )}
-        {!isLoadingAuth && !isSigningOut && user && (
           <ListItem
             sx={{ mt: 2, mb: 1, flexDirection: "column", alignItems: "center" }}
           >
-            <ListItemText primary={user.fullName} />
+            <ListItemText primary="Loading..." />
           </ListItem>
         )}
+        
         {isAuthenticated && (
           <>
             {myList.map((item, index) => {
