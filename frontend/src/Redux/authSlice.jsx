@@ -1,42 +1,49 @@
-// Redux/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
+import { userApi } from './userApi'; // استيراد الـ API
 
 const initialState = {
-  isAuthenticated: false, // يحدد ما إذا كان المستخدم مصادقًا عليه
-  user: null,             // يخزن بيانات المستخدم المصادق عليه (مثال: { _id, name, email, role })
-  isLoadingAuth: true,    // مؤشر لتحميل حالة المصادقة الأولية (true أثناء جلب بيانات المستخدم من الخادم لأول مرة)
+  isAuthenticated: false,
+  user: null,
+  isLoadingAuth: true,
 };
+
 const authSlice = createSlice({
-  name: 'auth', // اسم Slice، يُستخدم كجزء من اسم الـ Action Types (مثال: 'auth/setAuthUser')
+  name: 'auth',
   initialState,
   reducers: {
-    // Reducer يُستخدم عند تسجيل الدخول بنجاح أو عند جلب بيانات المستخدم المصادق عليه
     setAuthUser: (state, action) => {
-      state.isAuthenticated = true; // تعيين حالة المصادقة إلى صحيح
-      state.user = action.payload;  // تخزين بيانات المستخدم المرسلة كـ payload
-      state.isLoadingAuth = false;  // انتهاء التحميل الأولي
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.isLoadingAuth = false;
     },
-    
-    // Reducer يُستخدم عند تسجيل الخروج أو عند فشل المصادقة
     clearAuthUser: (state) => {
-      state.isAuthenticated = false; // تعيين حالة المصادقة إلى خطأ
-      state.user = null;             // مسح بيانات المستخدم
-      state.isLoadingAuth = false;   // انتهاء التحميل الأولي (حتى لو فشل)
+      state.isAuthenticated = false;
+      state.user = null;
+      state.isLoadingAuth = false;
     },
-    // Reducer يُستخدم لتتبع حالة التحقق الأولي من المصادقة (أثناء جلب /api/profile)
     setLoadingAuth: (state, action) => {
-      state.isLoadingAuth = action.payload; // تحديث حالة التحميل (true/false)
-    }
+      state.isLoadingAuth = action.payload;
+    },
   },
-  
-  // يمكنك إضافة `extraReducers` هنا إذا كنت ترغب في التعامل مع الـ actions
-  // الخاصة بـ RTK Query (مثل `userApi.endpoints.getUserProfile.matchFulfilled`)
-  // بشكل مباشر لتحديث حالة المصادقة، ولكن النهج الحالي في App.js باستخدام useEffect
-  // يعمل بشكل جيد ويوفر مرونة.
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      userApi.endpoints.getUserProfile.matchFulfilled,
+      (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        state.isLoadingAuth = false;
+      }
+    );
+    builder.addMatcher(
+      userApi.endpoints.getUserProfile.matchRejected,
+      (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.isLoadingAuth = false;
+      }
+    );
+  },
 });
 
-// تصدير الـ actions ليتم استخدامها في المكونات (مثل dispatch(setAuthUser(userData)))
 export const { setAuthUser, clearAuthUser, setLoadingAuth } = authSlice.actions;
-
-// تصدير الـ reducer ليتم إضافته إلى Redux Store
 export default authSlice.reducer;

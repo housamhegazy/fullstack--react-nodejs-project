@@ -5,6 +5,16 @@ const bcrypt = require('bcryptjs'); // لتشفير كلمات المرور
 
 const UserSchema = new mongoose.Schema({
   // معلومات الاسم (يمكنك دمجها في 'fullName' إذا كنت تفضل، لكن فصلها أفضل عادةً)
+  // حقل جديد لتخزين المعرف الفريد الذي يوفره جوجل
+    googleId: {
+        type: String,
+        required: false, // غير مطلوب للمستخدمين العاديين
+        unique: true, // يجب أن يكون فريدًا
+        sparse: true, // يسمح بوجود العديد من المستخدمين الذين لا يملكون هذا الحقل
+    },
+    avatar:{
+      type:String
+    },
   fullName: {
     type: String,
     required: [true, 'full name is required.'],
@@ -22,9 +32,9 @@ const UserSchema = new mongoose.Schema({
   
   password: {
     type: String,
-    required: [true, 'Password is required.'],
-    minlength: [6, 'Password must be at least 6 characters long.'], // الحد الأدنى لطول كلمة المرور
-    select: false, // لا يتم إرجاع كلمة المرور في الاستعلامات افتراضيًا لأسباب أمنية
+    // minlength: [6, 'Password must be at least 6 characters long.'], // الحد الأدنى لطول كلمة المرور
+    // select: false, // لا يتم إرجاع كلمة المرور في الاستعلامات افتراضيًا لأسباب أمنية
+
   },
 
   role: { // مثال لدور المستخدم
@@ -43,7 +53,7 @@ const UserSchema = new mongoose.Schema({
 // Middleware لتشفير كلمة المرور قبل حفظ المستخدم
 UserSchema.pre('save', async function (next) {
   // قم بتشفير كلمة المرور فقط إذا تم تعديلها أو كانت جديدة
-  if (!this.isModified('password')) {
+  if (!this.password || !this.isModified('password')) {
     next();
   }
   const salt = await bcrypt.genSalt(10);

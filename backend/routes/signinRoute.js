@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UserSchema = require("../models/userModel"); // استيراد نموذج المستخدم
-
+const jwt = require("jsonwebtoken");
 // دالة handleError (يمكنك وضعها في ملف منفصل واستيرادها)
 
 const handleError = (
@@ -14,7 +14,7 @@ const handleError = (
   res.status(statusCode).json({ message: error.message || defaultMessage });
 };
 
-router.post("/api/signin",async (req, res) => {
+router.post("",async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ message: "all fields required" });
@@ -37,6 +37,12 @@ router.post("/api/signin",async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "this email is not registered" });
     }
+
+        // تحقق مما إذا كان المستخدم مسجلاً عبر جوجل
+        if (user.googleId) {
+            return res.status(400).json({ message: 'This account is registered with Google. Please sign in with your Google account.' });
+        }
+    // تحقق من كلمة المرور
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: "incorrect password" });
@@ -49,13 +55,31 @@ router.post("/api/signin",async (req, res) => {
       await user.save().then(() => {
         console.log("User lastLogin updated:", user.lastLogin);
       });
+
+    // 6. إصدار JWT وتخزينه في الكوكيز (التوحيد مع Google Auth)
+    const payload = { user: { id: user._id } };
+const token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET || 'your_jwt_secret',
+      { expiresIn: '1h' }
+    );
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'Lax'
+    });
+      // 7. إرجاع بيانات المستخدم (بدون كلمة المرور)
+    const userResponse = user.toObject({ virtuals: true });
+    delete userResponse.password; // Explicitly remove password from the response if it was fetched
+
+
+
       // إنشاء جلسة للمستخدم بعد التحقق الناجح
       req.session.userId = user._id;
       req.session.username = user.fullName;
       console.log("Session object exists:", req.session.userId);
       // Use .toObject({ virtuals: true }) to include any virtual fields like fullName
-      const userResponse = user.toObject({ virtuals: true });
-      delete userResponse.password; // Explicitly remove password from the response if it was fetched
+      // const userResponse = user.toObject({ virtuals: true });
       res.status(200).json({
         message: "Successfully signed in",
         user: userResponse,

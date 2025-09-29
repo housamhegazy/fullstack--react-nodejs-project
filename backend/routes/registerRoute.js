@@ -13,7 +13,7 @@ const handleError = (
   res.status(statusCode).json({ message: error.message || defaultMessage });
 };
 
-router.post("/register", async (req, res) => {
+router.post("", async (req, res) => {
   const { fullName, email, password, confirmPassword } = req.body;
 
   // التحقق من الواجهة الخلفية (مهم جداً حتى لو تم التحقق في الواجهة الأمامية)

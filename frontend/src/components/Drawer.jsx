@@ -55,7 +55,7 @@ function ResponsiveDrawer({
       pathname: "/profile",
     },
     {
-      title: "home",
+      title: "Customers",
       icon: <HomeIcon color={iconColor} />,
       pathname: "/",
     },

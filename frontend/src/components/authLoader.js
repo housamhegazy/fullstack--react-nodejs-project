@@ -1,3 +1,8 @@
+//***********************ملاحظات هامه ********************** */
+// نعتمد بشكل اساسي على الريأكت هوك لحماية المسارات 
+// ونعتمد بشكل اساسي على ملف authSlice  للتحقق من حالة المستخدم في كل انحاء التطبيق 
+//   (RTK Query)ونعتمد بشكل اساسي على useGetUserProfileQuery للحصول على بيانات المستخدم والتعديل عليها 
+//***********************ملاحظات هامه ********************** */
 // utils/authLoader.js (ملف جديد يمكنك إنشاؤه)
 import { redirect } from "react-router-dom";
 import axios from "axios"; // تأكد أن axios مستورد هنا أيضًا وأن `withCredentials` مضبوط
@@ -5,12 +10,11 @@ import axios from "axios"; // تأكد أن axios مستورد هنا أيضًا
 
 export const authLoader = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/profile");  
+    const response = await axios.get("http://localhost:3000/api/profile",{withCredentials: true});  
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
       console.log("Unauthorized access in loader, redirecting to signin.");
-      // store.dispatch(clearAuthUser());
       // <--- هذا هو الجزء السحري: إعادة التوجيه الفورية
       throw redirect("/signin");
     }

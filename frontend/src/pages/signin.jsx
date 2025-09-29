@@ -16,9 +16,10 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "../Redux/authSlice";
 import { useGetUserProfileQuery } from "../Redux/userApi";
-
+import GoogleLogin from "../components/GoogleLogin";
 
 function SignIn() {
+  // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
   //هنا انا استخدمت ال loader عشان احصل على بيانات المستخدم لكن لو هعمل تحديث بيانات المستخدم في الملف الشخصي ممكن استخدم useGetUserProfileQuery
   // @ts-ignore
   const authState = useSelector((state) => state.auth);
@@ -40,8 +41,8 @@ function SignIn() {
     // تحقق من أن التحميل الأولي قد انتهى
     if (!isLoadingAuth && isAuthenticated) {
       // إذا كان المستخدم مصادقًا عليه، قم بإعادة توجيهه إلى الصفحة الرئيسية
-      console.log('User is authenticated, redirecting from signin page.');
-      navigate('/');
+      console.log("User is authenticated, redirecting from signin page.");
+      navigate("/");
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
@@ -51,7 +52,6 @@ function SignIn() {
     return /\S+@\S+\.\S+/.test(email);
   };
 
-  
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -76,24 +76,28 @@ function SignIn() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/api/signin", {
-        email,
-        password,
-      },{ withCredentials: true }); 
+      const response = await axios.post(
+        "http://localhost:3000/api/signin",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
 
       // إذا كانت الاستجابة JSON:
       if (response.data.message) {
         setSuccess(response.data.message);
         const userData = response.data.user; // تأكد من أن السيرفر يرسل بيانات المستخدم هنا
-        dispatch(setAuthUser(userData));     // <--- تحديث Redux Auth State
-            await refetch(); // إعادة جلب بيانات المستخدم من الباكند
+        dispatch(setAuthUser(userData)); // <--- تحديث Redux Auth State
+        await refetch(); // إعادة جلب بيانات المستخدم من الباكند
         // تأخير بسيط لرؤية رسالة النجاح قبل التنقل
-        navigate("/");        
+        navigate("/");
         // تسجيل الدخول ناجح
       } else {
         setSuccess("successfully registered");
-         // إذا لم تكن هناك رسالة، يمكن افتراض رسالة افتراضي
-            await refetch(); // إعادة جلب بيانات المستخدم من الباكند
+        // إذا لم تكن هناك رسالة، يمكن افتراض رسالة افتراضي
+        await refetch(); // إعادة جلب بيانات المستخدم من الباكند
         navigate("/");
       }
     } catch (apiError) {
@@ -101,9 +105,11 @@ function SignIn() {
       if (apiError.response) {
         const status = apiError.response.status;
         const errorMessage = apiError.response.data.message;
-       if (status === 400) {
+        if (status === 400) {
           // 400 Bad Request - قد يكون بسبب بيانات غير صالحة
-          setError(errorMessage || "this email is not registered or incorrect password");
+          setError(
+            errorMessage || "this email is not registered or incorrect password"
+          );
         } else {
           // أي أخطاء أخرى من الـ Backend
           setError(
@@ -135,7 +141,7 @@ function SignIn() {
           alignItems: "center",
           minHeight: "100vh",
           bgcolor: "background.default", // استخدام لون الخلفية من الثيم
-          color: "text.primary",         // استخدام لون النص من الثيم
+          color: "text.primary", // استخدام لون النص من الثيم
         }}
       >
         <CircularProgress sx={{ mb: 2 }} />
@@ -234,7 +240,9 @@ function SignIn() {
             </Link>
           </Box>
         </Box>
+              <GoogleLogin /> {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
       </Box>
+
     </Container>
   );
 }

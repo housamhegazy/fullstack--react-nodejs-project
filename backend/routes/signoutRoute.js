@@ -4,7 +4,7 @@ const router = express.Router();
 const isAuthenticated = require('../middleware/authMiddleware'); // إذا كنت ترغب في حماية مسار تسجيل الخروج (اختياري)
 
 // مسار تسجيل الخروج
-router.post('/api/signout', (req, res) => {
+router.post('', (req, res) => {
     // تحقق مما إذا كانت هناك جلسة للمستخدم
     if (req.session) {
         // تدمير الجلسة الحالية
