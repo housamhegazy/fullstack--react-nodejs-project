@@ -1,6 +1,8 @@
+//خاصه بتسجيل الدخول عن طريق جوجل
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/userModel');
+
 
 passport.use(
   new GoogleStrategy(
@@ -11,7 +13,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        console.log('Google Profile:', profile); // تسجيل بيانات الملف الشخصي
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
           user = await User.create({
@@ -20,10 +21,7 @@ passport.use(
             email: profile.emails[0].value,
             avatar: profile.photos[0].value,
           });
-          console.log('New user created:', user);
-        } else {
-          console.log('Existing user found:', user);
-        }
+        } 
         return cb(null, user);
       } catch (error) {
         console.error('Error in Google Strategy:', error);

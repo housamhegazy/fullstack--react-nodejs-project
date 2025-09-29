@@ -1,3 +1,6 @@
+
+//مسار التوجيه بين الموقع وجوجل 
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 

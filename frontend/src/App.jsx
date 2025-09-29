@@ -15,17 +15,16 @@ import Root from "./Root";
 import Err_404Page from "./pages/Err_404Page";
 import Signin from "./pages/signin";
 import SignUp from "./pages/register";
-// import AuthSuccess from "./components/AuthSuccess"; // أو المسار حسب مكان تخزينه
-import AuthSuccess from './components/AuthSuccess'; // أو المسار حسب مكان تخزينه
+import AuthSuccess from './components/AuthSuccess'; 
 
 import axios from "axios";
 axios.defaults.withCredentials = true;
-// <--- استيراد الـ loader الجديد
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setLoadingAuth, setAuthUser, clearAuthUser } from "./Redux/authSlice";
 import { useGetUserProfileQuery } from "./Redux/userApi";
 import { Box, CircularProgress, Typography } from "@mui/material";
+// <--- استيراد الـ loader الجديد
 import { authLoader } from "./components/authLoader"; // استيراد الـ loader لصفحة تسجيل الدخول
 import GoogleLogin from "./components/GoogleLogin";
 function App() {
@@ -45,24 +44,16 @@ function App() {
   });
 
   // useEffect لتحديث Redux authSlice بناءً على حالة جلب بيانات الملف الشخصي
-//   useEffect(() => {
-//   console.log('User Profile State:', {
-//     isLoading,
-//     isSuccess,
-//     isError,
-//     error: isError ? (typeof isError === 'object' ? isError.toString() : isError) : null,
-//     userProfile,
-//   });
-//   dispatch(setLoadingAuth(isLoading));
-//   if (!isLoading) {
-//     if (isSuccess && userProfile) {
-//       dispatch(setAuthUser(userProfile));
-//     } else if (isError) {
-//       console.log('Authentication error details:', isError);
-//       dispatch(clearAuthUser());
-//     }
-//   }
-// }, [userProfile, isLoading, isSuccess, isError, dispatch]);
+  useEffect(() => {
+  dispatch(setLoadingAuth(isLoading));
+  if (!isLoading) {
+    if (isSuccess && userProfile) {
+      dispatch(setAuthUser(userProfile));
+    } else if (isError) {
+      dispatch(clearAuthUser());
+    }
+  }
+}, [userProfile, isLoading, isSuccess, isError, dispatch]);
 
   const router = createBrowserRouter([
     {

@@ -6,7 +6,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import {
   DarkMode,
@@ -83,21 +82,6 @@ function ResponsiveDrawer({
     }
 
     //old code
-    // // إرسال طلب تسجيل الخروج إلى الخادم
-    // try {
-    //   const response = await fetch("http://localhost:3000/api/signout", {
-    //     method: "POST",
-    //     credentials: "include", // تأكد من تضمين الكوكيز
-    //   });
-    //   if (response.ok) {
-    //     // تسجيل الخروج ناجح، قم بإعادة التوجيه إلى صفحة تسجيل الدخول أو الصفحة الرئيسية
-    //     navigate("/signin"); // أو أي مسار آخر ترغب في التوجيه إليه بعد تسجيل الخروج
-    //   } else {
-    //     console.error("Failed to log out");
-    //   }
-    // } catch (error) {
-    //   console.error("Error during logout:", error);
-    // }
   };
   //drawer content
   const drawer = (
@@ -109,10 +93,10 @@ function ResponsiveDrawer({
           style={{
             height:"100%",
             fontSize: "1rem",
-            color: "white",
+            color: "inherit",
             display:"flex",
             justifyContent:"center",
-            alignItems:"center"
+            alignItems:"center",
           }}
         >
           Customer Dashboard

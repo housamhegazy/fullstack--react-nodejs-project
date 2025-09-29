@@ -60,7 +60,7 @@ app.use(
     },
   })
 );
-// إعداد Passport
+// إعداد Passport لتسجيل الدخول بجوجل 
 app.use(passport.initialize());
 app.use(passport.session());
 

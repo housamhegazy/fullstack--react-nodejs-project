@@ -1,4 +1,4 @@
-// src/components/GoogleLogin.jsx
+// زر الدخول عن طريق جوجل 
 import { Google } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
@@ -7,7 +7,6 @@ const GoogleLogin = () => {
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:3000/auth/google'; // يوجه إلى نهاية الباك اند
   };
-
   return (
      <Box sx={{ my: 2 }}>
       <Button
@@ -29,7 +28,7 @@ const GoogleLogin = () => {
         }}
       >
         <Typography component="span" sx={{ ml: 1 }}>
-          تسجيل الدخول عبر جوجل
+          Google Login
         </Typography>
       </Button>
     </Box>
