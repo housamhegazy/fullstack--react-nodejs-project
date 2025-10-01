@@ -4,26 +4,52 @@
 //   (RTK Query)ونعتمد بشكل اساسي على useGetUserProfileQuery للحصول على بيانات المستخدم والتعديل عليها 
 //***********************ملاحظات هامه ********************** */
 // utils/authLoader.js (ملف جديد يمكنك إنشاؤه)
-import { redirect } from "react-router-dom";
-import axios from "axios"; // تأكد أن axios مستورد هنا أيضًا وأن `withCredentials` مضبوط
 
 
-export const authLoader = async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/api/profile",{withCredentials: true});  
-    return response.data;
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      console.log("Unauthorized access in loader, redirecting to signin.");
-      // <--- هذا هو الجزء السحري: إعادة التوجيه الفورية
-      throw redirect("/signin");
+import { redirect } from 'react-router-dom';
+import { store } from '../Redux/store';
+import { userApi } from '../Redux/userApi';
+import { setAuthUser } from '../Redux/authSlice';
+
+// دالة مساعدة للتحقق من المصادقة
+const checkAuth = async () => {
+    try {
+        const result = await store.dispatch(
+            userApi.endpoints.getUserProfile.initiate(undefined, { forceRefetch: true })
+        ).unwrap();
+        return result;
+    } catch (error) {
+        throw redirect('/signin');
     }
-    // لأي خطأ آخر، يمكنك إلقاء الخطأ للسماح لـ ErrorBoundary بالتعامل معه
-    // أو إرجاع قيمة خطأ محددة
-    console.error("Error in authLoader:", error);
-    throw new Error("Failed to load user profile in loader.");
-  }
 };
+
+export const authLoader = async ({ request }) => {
+  const user = await checkAuth();
+  return { user }; // إرجاع البيانات مباشرة بعد التحميل
+};
+
+
+
+// import { redirect } from "react-router-dom";
+// import axios from "axios"; // تأكد أن axios مستورد هنا أيضًا وأن `withCredentials` مضبوط
+
+
+// export const authLoader = async () => {
+//   try {
+//     const response = await axios.get("http://localhost:3000/api/profile",{withCredentials: true});  
+//     return response.data;
+//   } catch (error) {
+//     if (error.response && error.response.status === 401) {
+//       console.log("Unauthorized access in loader, redirecting to signin.");
+//       // <--- هذا هو الجزء السحري: إعادة التوجيه الفورية
+//       throw redirect("/signin");
+//     }
+//     // لأي خطأ آخر، يمكنك إلقاء الخطأ للسماح لـ ErrorBoundary بالتعامل معه
+//     // أو إرجاع قيمة خطأ محددة
+//     console.error("Error in authLoader:", error);
+//     throw new Error("Failed to load user profile in loader.");
+//   }
+// };
 
 
 // 2. Loader لمنع الوصول لصفحات Signin/Register

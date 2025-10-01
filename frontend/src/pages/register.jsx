@@ -43,7 +43,7 @@ function SignUp() {
     if (!isLoadingAuth && isAuthenticated) {
       // إذا كان المستخدم مصادقًا عليه، قم بإعادة توجيهه إلى الصفحة الرئيسية
       console.log("User is authenticated, redirecting from signin page.");
-      navigate("/");
+      navigate("/",{ replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 

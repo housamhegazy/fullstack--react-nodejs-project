@@ -1,23 +1,24 @@
 // زر الدخول عن طريق جوجل 
-import { Google } from '@mui/icons-material';
+import { Facebook } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
 
-const GoogleLogin = () => {
-  const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/google'; // يوجه إلى نهاية الباك اند
+const FacebooklogIn = () => {
+  const handleFacebook = () => {
+    window.location.href = 'http://localhost:3000/auth/facebook'; // يوجه إلى نهاية الباك اند
   };
   return (
      <Box sx={{ my: 2 }}>
       <Button
         variant="contained"
-        onClick={handleGoogleLogin}
-        startIcon={<Google />}
+        onClick={handleFacebook}
+        startIcon={<Facebook />}
         sx={{
           backgroundColor: '#4285F4',
           color: 'white',
           '&:hover': {
-            backgroundColor: '#357ae8',
+            backgroundColor: '#d8dee9ff',
+            color:'#4285F4'
           },
           textTransform: 'none',
           fontSize: '1rem',
@@ -28,11 +29,11 @@ const GoogleLogin = () => {
         }}
       >
         <Typography component="span" sx={{ ml: 1 }}>
-          Google Login
+          Facebook Login
         </Typography>
       </Button>
     </Box>
   );
 };
 
-export default GoogleLogin;
+export default FacebooklogIn;

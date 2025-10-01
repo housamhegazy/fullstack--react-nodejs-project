@@ -14,7 +14,7 @@ const handleError = (
   res.status(statusCode).json({ message: error.message || defaultMessage });
 };
 
-router.post("",async (req, res) => {
+router.post("", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ message: "all fields required" });
@@ -37,11 +37,15 @@ router.post("",async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "this email is not registered" });
     }
-
-        // تحقق مما إذا كان المستخدم مسجلاً عبر جوجل
-        if (user.googleId) {
-            return res.status(400).json({ message: 'This account is registered with Google. Please sign in with your Google account.' });
-        }
+    // تحقق مما إذا كان المستخدم مسجلاً عبر جوجل
+    // if (user.googleId) {
+    //   return res
+    //     .status(400)
+    //     .json({
+    //       message:
+    //         "This account is registered with Google. Please sign in with your Google account.",
+    //     });
+    // }
     // تحقق من كلمة المرور
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
@@ -56,23 +60,21 @@ router.post("",async (req, res) => {
         console.log("User lastLogin updated:", user.lastLogin);
       });
 
-    // 6. إصدار JWT وتخزينه في الكوكيز (التوحيد مع Google Auth)
-    const payload = { user: { id: user._id } };
-const token = jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'your_jwt_secret',
-      { expiresIn: '1h' }
-    );
-    res.cookie('token', token, { 
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'Lax'
-    });
+      // 6. إصدار JWT وتخزينه في الكوكيز (التوحيد مع Google Auth)
+      const payload = { user: { id: user._id } };
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET || "your_jwt_secret",
+        { expiresIn: "1h" }
+      );
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+      });
       // 7. إرجاع بيانات المستخدم (بدون كلمة المرور)
-    const userResponse = user.toObject({ virtuals: true });
-    delete userResponse.password; // Explicitly remove password from the response if it was fetched
-
-
+      const userResponse = user.toObject({ virtuals: true });
+      delete userResponse.password; // Explicitly remove password from the response if it was fetched
 
       // إنشاء جلسة للمستخدم بعد التحقق الناجح
       req.session.userId = user._id;
@@ -84,7 +86,7 @@ const token = jwt.sign(
         message: "Successfully signed in",
         user: userResponse,
       });
-      
+
       // يمكنك تخزين أي بيانات أخرى تحتاجها في الجلسة
     } else {
       console.error("Session object does not exist.");

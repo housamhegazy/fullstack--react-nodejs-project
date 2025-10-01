@@ -16,10 +16,11 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "../Redux/authSlice";
 import { useGetUserProfileQuery } from "../Redux/userApi";
-import GoogleLogin from "../components/GoogleLogin";
+import GoogleLogin from "../components/SocialLoginBtns/GoogleLogin";
+import FacebooklogIn from "../components/SocialLoginBtns/FacebookLogin";
+import XLoginButton from "../components/SocialLoginBtns/X-login";
 
 function SignIn() {
-  // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
   //هنا انا استخدمت ال loader عشان احصل على بيانات المستخدم لكن لو هعمل تحديث بيانات المستخدم في الملف الشخصي ممكن استخدم useGetUserProfileQuery
   // @ts-ignore
   const authState = useSelector((state) => state.auth);
@@ -42,7 +43,7 @@ function SignIn() {
     if (!isLoadingAuth && isAuthenticated) {
       // إذا كان المستخدم مصادقًا عليه، قم بإعادة توجيهه إلى الصفحة الرئيسية
       console.log("User is authenticated, redirecting from signin page.");
-      navigate("/");
+      navigate("/",{ replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
@@ -145,7 +146,7 @@ function SignIn() {
         }}
       >
         <CircularProgress sx={{ mb: 2 }} />
-        <Typography variant="h6">جار التحقق من المصادقة...</Typography>
+        <Typography variant="h6">جار التحقق من البيانات...</Typography>
         <Typography variant="body2">يرجى الانتظار.</Typography>
       </Box>
     );
@@ -240,9 +241,14 @@ function SignIn() {
             </Link>
           </Box>
         </Box>
-              <GoogleLogin /> {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
+        <Box sx={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",mt:5,backgroundColor:"#ffffff4d",borderRadius:"20px",px:5}}>
+          <GoogleLogin />{" "}
+        {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
+        <FacebooklogIn />{" "}
+        {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
+        <XLoginButton/>
+        </Box>
       </Box>
-
     </Container>
   );
 }

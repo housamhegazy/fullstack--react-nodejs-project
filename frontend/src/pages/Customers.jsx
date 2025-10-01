@@ -14,13 +14,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Delete, Edit, RemoveRedEye } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import axios from "axios"; // استيراد Axios
 import Swal from "sweetalert2";
 import { useGetUserProfileQuery } from "../Redux/userApi";
-const Home = () => {
+const Customers = () => {
   //احضرت بيانات المستخدم حتى يتم ارسالها عند طلب عرض بيانات العملاء
-    const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+  const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
   const navigate = useNavigate();
   const [customers, setcustomers] = useState([]); // State to store fetched customers
   const [loading, setLoading] = useState(true); // State for loading indicator
@@ -85,21 +85,6 @@ const Home = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
-        }}
-      >
-        <CircularProgress />
-        <Typography sx={{ ml: 2 }}>Loading customers...</Typography>
-      </Box>
-    );
-  }
 
   if (error) {
     return (
@@ -206,4 +191,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Customers;

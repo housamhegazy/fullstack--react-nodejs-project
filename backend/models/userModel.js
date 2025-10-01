@@ -12,6 +12,17 @@ const UserSchema = new mongoose.Schema({
         unique: true, // يجب أن يكون فريدًا
         sparse: true, // يسمح بوجود العديد من المستخدمين الذين لا يملكون هذا الحقل
     },
+    facebookId: {
+      type: String,
+        required: false, // غير مطلوب للمستخدمين العاديين
+        unique: true, // يجب أن يكون فريدًا
+        sparse: true, // يسمح بوجود العديد من المستخدمين الذين لا يملكون هذا الحقل
+    },
+     xId: {
+        type: String,
+        unique: true,
+        sparse: true,
+    },
     avatar:{
       type:String
     },
