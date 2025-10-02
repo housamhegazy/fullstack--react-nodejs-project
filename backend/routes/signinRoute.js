@@ -37,7 +37,13 @@ router.post("", async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "this email is not registered" });
     }
-    // تحقق مما إذا كان المستخدم مسجلاً عبر جوجل
+    if (!user.password) {
+      // هذا الحساب تم تسجيله عبر مصادقة خارجية (جوجل، فيسبوك، إلخ) ولا يحتوي على كلمة مرور محلية.
+      return res.status(400).json({
+        message: "This account must sign in via a social login provider.",
+      });
+    }
+    // تحقق مما إذا كان المستخدم مسجلاً عبر جوجل لو حبيت امنع اللي مسجل عبر جوجل انه يسجل الدخول العادي
     // if (user.googleId) {
     //   return res
     //     .status(400)
@@ -60,18 +66,6 @@ router.post("", async (req, res) => {
         console.log("User lastLogin updated:", user.lastLogin);
       });
 
-      // 6. إصدار JWT وتخزينه في الكوكيز (التوحيد مع Google Auth)
-      const payload = { user: { id: user._id } };
-      const token = jwt.sign(
-        payload,
-        process.env.JWT_SECRET || "your_jwt_secret",
-        { expiresIn: "1h" }
-      );
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
-      });
       // 7. إرجاع بيانات المستخدم (بدون كلمة المرور)
       const userResponse = user.toObject({ virtuals: true });
       delete userResponse.password; // Explicitly remove password from the response if it was fetched

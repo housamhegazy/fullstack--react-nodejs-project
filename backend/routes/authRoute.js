@@ -14,7 +14,7 @@ router.get(
   "/auth/google/callback",
 passport.authenticate('google', { failureRedirect: '/signin' }),
   (req, res) => {
-    res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+    res.redirect(`${process.env.FRONTEND_URL}/`);
   }
 );
 
@@ -29,7 +29,7 @@ router.get(
   "/auth/facebook/callback",
   passport.authenticate('facebook', { failureRedirect: '/signin' }),
   (req, res) => {
-    res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+    res.redirect(`${process.env.FRONTEND_URL}/`);
   }
 );
 
@@ -38,7 +38,7 @@ router.get(
 router.get("/auth/x", passport.authenticate("twitter")); // تم تغيير المسار إلى x
 router.get("/auth/x/callback", passport.authenticate('twitter', { failureRedirect: '/signin' }),
     (req, res) => {
-        res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+        res.redirect(`${process.env.FRONTEND_URL}/`);
     }
 );
 module.exports = router;
