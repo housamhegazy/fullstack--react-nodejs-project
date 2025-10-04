@@ -19,6 +19,7 @@ import axios from "axios"; // استيراد Axios
 import Swal from "sweetalert2";
 import { useGetUserProfileQuery } from "../Redux/userApi";
 import { useSelector } from "react-redux";
+import LoadingPage from "../components/loading/loadingPage";
 const Customers = () => {
   //احضرت بيانات المستخدم حتى يتم ارسالها عند طلب عرض بيانات العملاء
   const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
@@ -107,7 +108,11 @@ const Customers = () => {
       </Box>
     );
   }
-
+if(loading){
+  return(<>
+    <LoadingPage/>
+  </>)
+}
   if(customers.length < 1){
     return (
       <Typography
