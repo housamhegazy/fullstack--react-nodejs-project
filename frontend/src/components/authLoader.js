@@ -23,11 +23,20 @@ const checkAuth = async () => {
     }
 };
 
-export const authLoader = async ({ request }) => {
-  const user = await checkAuth();
-  return { user }; // إرجاع البيانات مباشرة بعد التحميل
-};
 
+export const authLoader = async ({ request }) => {
+    try {
+        // إذا فشل هذا الطلب (يستجيب الخادم بـ 401 بعد تسجيل الخروج)
+        const result = await store.dispatch(
+            userApi.endpoints.getUserProfile.initiate(undefined, { forceRefetch: true })
+        ).unwrap();
+        
+        return result; 
+    } catch (error) {
+        // يتم إلقاء هذا الخطأ إذا فشل التحقق (أي تم تسجيل الخروج)
+        throw redirect('/signin'); 
+    }
+};
 
 
 // import { redirect } from "react-router-dom";

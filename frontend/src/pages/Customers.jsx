@@ -18,9 +18,13 @@ import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import axios from "axios"; // استيراد Axios
 import Swal from "sweetalert2";
 import { useGetUserProfileQuery } from "../Redux/userApi";
+import { useSelector } from "react-redux";
 const Customers = () => {
   //احضرت بيانات المستخدم حتى يتم ارسالها عند طلب عرض بيانات العملاء
   const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+      // const userData = useLoaderData(); 
+      const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+
   const navigate = useNavigate();
   const [customers, setcustomers] = useState([]); // State to store fetched customers
   const [loading, setLoading] = useState(true); // State for loading indicator
@@ -48,8 +52,11 @@ const Customers = () => {
 
   // useEffect to call fetchcustomers when the component mounts
   useEffect(() => {
+    if (!isAuthenticated) {
+            navigate('/signin', { replace: true });
+        }
     fetchcustomers();
-  }, []); // Empty dependency array means this runs once on mount
+  }, [isAuthenticated]); // Empty dependency array means this runs once on mount
 
   // delete function
   const deleteFunc = async (id) => {
