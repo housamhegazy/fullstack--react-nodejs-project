@@ -16,8 +16,11 @@ const signinRoute = require("./routes/signinRoute");
 const getUserRoute = require("./routes/GetUserRoute");
 const signoutRoute = require("./routes/signoutRoute");
 const authRoute = require("./routes/authRoute");
+const forgotPasswordRoute = require("./routes/forgetPasswordRoute"); 
+const resetPasswordRoute = require("./routes/resetPasswordRoute"); 
 
-const MongoStore = require("connect-mongo"); // <--- إضافة هذا
+
+const MongoStore = require("connect-mongo"); 
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -70,6 +73,8 @@ app.use("/api/signin", signinRoute);
 app.use("/api/signout", signoutRoute);
 //google signin
 app.use("", authRoute);
+app.use("/api/forgot-password", forgotPasswordRoute); // <--- إضافة هذا
+app.use("/api/reset-password", resetPasswordRoute); // <--- إضافة هذا
 
 app.use("/api/profile", isAuthenticated, getUserRoute);
 app.use("", isAuthenticated, allRoutes);

@@ -43,7 +43,7 @@ function SignIn() {
     if (!isLoadingAuth && isAuthenticated) {
       // إذا كان المستخدم مصادقًا عليه، قم بإعادة توجيهه إلى الصفحة الرئيسية
       console.log("User is authenticated, redirecting from signin page.");
-      navigate("/",{ replace: true });
+      navigate("/", { replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
@@ -222,7 +222,7 @@ function SignIn() {
           </Button>
           <Box display="flex" justifyContent="center">
             <Link
-              to="#"
+              to="/forgot-password"
               style={{
                 color: `${theme.palette.mode === "dark" ? "white" : "black"}`,
               }}
@@ -241,12 +241,23 @@ function SignIn() {
             </Link>
           </Box>
         </Box>
-        <Box sx={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",mt:5,backgroundColor:"#ffffff4d",borderRadius:"20px",px:5}}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: 5,
+            backgroundColor: "#ffffff4d",
+            borderRadius: "20px",
+            px: 5,
+          }}
+        >
           <GoogleLogin />{" "}
-        {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
-        <FacebooklogIn />{" "}
-        {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
-        <XLoginButton/>
+          {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
+          <FacebooklogIn />{" "}
+          {/* أضفه إذا كنت تريد عرضه بشكل مستقل، أو قم بدمجه في صفحة اللوجين */}
+          <XLoginButton />
         </Box>
       </Box>
     </Container>

@@ -49,6 +49,7 @@ const customerSchema = new mongoose.Schema(
       required: true,
       ref: "UserSchema", // ربط هذا الحقل بنموذج المستخدم
     },
+    
   },
   {
     timestamps: true, // لإضافة حقلي createdAt و updatedAt تلقائياً

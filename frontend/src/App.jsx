@@ -32,6 +32,8 @@ import { useGetUserProfileQuery } from "./Redux/userApi";
 import { authLoader } from "./components/authLoader"; // استيراد الـ loader لصفحة تسجيل الدخول
 import CustomLoader from "./components/loading/loadingPage";
 import fetchingdataLoader from "./components/loading/fetchingData";
+import ResetPassword from "./pages/reset-password/resetPassword";
+import ForgotPassword from "./pages/reset-password/forgetPassword";
 const ProtectedRoute = ({ Component }) => (
   <Suspense fallback={<CustomLoader />}>
     <Component />
@@ -131,6 +133,10 @@ function App() {
         }, // <--- إضافة الـ loader هنا أيضًا
         { path: "auth-success", Component: AuthSuccess }, // إضافة مسار AuthSuccess هنا
         { path: "*", Component: Err_404Page },
+          // المسارات الجديدة لاسترداد كلمة المرور
+            { path: "forgot-password", Component: ForgotPassword }, // لطلب الإيميل
+            { path: "reset-password/:token", Component: ResetPassword }, // لإعادة تعيين كلمة المرور
+            // ...
       ],
     },
   ]);
