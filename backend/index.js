@@ -16,9 +16,10 @@ const signinRoute = require("./routes/signinRoute");
 const getUserRoute = require("./routes/GetUserRoute");
 const signoutRoute = require("./routes/signoutRoute");
 const authRoute = require("./routes/authRoute");
-const forgotPasswordRoute = require("./routes/forgetPasswordRoute"); 
-const resetPasswordRoute = require("./routes/resetPasswordRoute"); 
+const forgotPasswordRoute = require("./routes/resetPasswordRoutes/forgetPasswordRoute"); 
+const resetPasswordRoute = require("./routes/resetPasswordRoutes/resetPasswordRoute"); 
 const addCustomerRoute = require("./routes/addCustomerRoute")
+const updateUserRoute = require('./routes/updateUserRoute');
 
 
 const MongoStore = require("connect-mongo"); 
@@ -76,6 +77,7 @@ app.use("/api/signout", signoutRoute);
 app.use("", authRoute);
 app.use("/api/forgot-password", forgotPasswordRoute); // <--- إضافة هذا
 app.use("/api/reset-password", resetPasswordRoute); // <--- إضافة هذا
+app.use('/api/users', updateUserRoute); 
 
 app.use("/api/profile", isAuthenticated, getUserRoute);
 app.use("", isAuthenticated, allRoutes);

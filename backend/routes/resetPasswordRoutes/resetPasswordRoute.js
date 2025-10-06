@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const User = require('../models/userModel');
+const User = require('../../models/userModel');
 const crypto = require('crypto');
 
 const handleError = (res, error, statusCode = 500, defaultMessage = "An internal server error occurred.") => {

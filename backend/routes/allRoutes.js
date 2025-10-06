@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const CustomerModel = require("../models/customesSchema"); // استيراد نموذج المستخدم
+const CustomerModel = require("../models/customesSchema"); // استيراد نموذج العميل
 
 // ********************** تعريف دالة handleError هنا **********************
 const handleError = (res, error) => {
