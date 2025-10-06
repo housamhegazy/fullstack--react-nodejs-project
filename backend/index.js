@@ -18,6 +18,7 @@ const signoutRoute = require("./routes/signoutRoute");
 const authRoute = require("./routes/authRoute");
 const forgotPasswordRoute = require("./routes/forgetPasswordRoute"); 
 const resetPasswordRoute = require("./routes/resetPasswordRoute"); 
+const addCustomerRoute = require("./routes/addCustomerRoute")
 
 
 const MongoStore = require("connect-mongo"); 
@@ -78,6 +79,7 @@ app.use("/api/reset-password", resetPasswordRoute); // <--- إضافة هذا
 
 app.use("/api/profile", isAuthenticated, getUserRoute);
 app.use("", isAuthenticated, allRoutes);
+app.use("", isAuthenticated, addCustomerRoute);
 
 // ********************** الاتصال بـ MongoDB **********************
 mongoose
