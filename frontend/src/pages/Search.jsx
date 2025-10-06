@@ -15,7 +15,7 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -69,9 +69,13 @@ function Search() {
       setLoading(false);
     }
   };
+  const navigate = useNavigate()
   useEffect(() => {
     fetchSearchResults();
-  }, [location.search]);
+    if(!user){
+    navigate("/signin",{ replace: true })
+  }
+  }, [location.search,user]);
 
   // delete function
   const deleteFunc = async (id) => {

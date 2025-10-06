@@ -273,6 +273,7 @@ function Edite() {
   };
 
   // useEffect to call fetchcustomers when the component mounts
+  
   useEffect(() => {
     // تأكد من وجود ID قبل محاولة الجلب
     if (id) {
@@ -280,6 +281,7 @@ function Edite() {
     } else {
       setLoading(false);
       setError("No customer ID provided in the URL.");
+      navigate("/signin",{ replace: true })
     }
   }, [id]);
 

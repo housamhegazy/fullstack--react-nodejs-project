@@ -20,34 +20,22 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { format, formatDistanceToNow } from "date-fns";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   // @ts-ignore
   const authState = useSelector((state) => state.auth);
   const user = authState?.user; // <--- هنا بيانات المستخدم!
-  const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
+  // const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
 
   // إذا لم يكن هناك مستخدم بعد التحميل وعدم وجود أخطاء
-  if (isLoadingAuth) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          bgcolor: "background.default", // استخدام لون الخلفية من الثيم
-          color: "text.primary", // استخدام لون النص من الثيم
-        }}
-      >
-        <CircularProgress sx={{ mb: 2 }} />
-        <Typography variant="h6">جار التحقق من المصادقة...</Typography>
-        <Typography variant="body2">يرجى الانتظار.</Typography>
-      </Box>
-    );
+const navigate = useNavigate()
+useEffect(()=>{
+  if(!user){
+    navigate("/signin",{ replace: true })
   }
-
+},[navigate, user])
   if (user) {
     return (
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>

@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import { format, formatDistanceToNow } from 'date-fns'; // لاستخدام تنسيق التاريخ
 import axios from 'axios'; 
 import { useGetUserProfileQuery } from '../Redux/userApi';
@@ -43,6 +43,9 @@ function View() {
     }
   };
 
+
+const navigate = useNavigate()
+
   // useEffect to call fetchcustomers when the component mounts
   useEffect(() => {
     // تأكد من وجود ID قبل محاولة الجلب
@@ -51,6 +54,8 @@ function View() {
     } else {
       setLoading(false);
       setError("No customer ID provided in the URL.");
+      navigate("/signin",{ replace: true })
+
     }
   }, []); 
 
