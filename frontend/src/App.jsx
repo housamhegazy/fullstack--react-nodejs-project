@@ -7,7 +7,6 @@
 import {
   createBrowserRouter,
   RouterProvider,
-  useLoaderData,
 } from "react-router-dom"; // <--- هذا هو الاستيراد الصحيح والوحيد لحزمة التوجيه
 import Profile from "./pages/Profile";
 import Customers from "./pages/Customers";
@@ -20,7 +19,6 @@ import Err_404Page from "./pages/Err_404Page";
 import Signin from "./pages/signin";
 import SignUp from "./pages/register";
 import AuthSuccess from "./components/AuthSuccess";
-
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import { Suspense, useEffect } from "react";
@@ -30,20 +28,20 @@ import { useGetUserProfileQuery } from "./Redux/userApi";
 
 // <--- استيراد الـ loader الجديد
 import { authLoader } from "./components/authLoader"; // استيراد الـ loader لصفحة تسجيل الدخول
-import CustomLoader from "./components/loading/loadingPage";
+import LoadingPage from "./components/loading/loadingPage";
 import fetchingdataLoader from "./components/loading/fetchingData";
 import ResetPassword from "./pages/reset-password/resetPassword";
 import ForgotPassword from "./pages/reset-password/forgetPassword";
+
 const ProtectedRoute = ({ Component }) => (
-  <Suspense fallback={<CustomLoader />}>
+  <Suspense fallback={<LoadingPage />}>
     <Component />
   </Suspense>
 );
 
 function App() {
   const dispatch = useDispatch();
-  // const loaderData = useLoaderData();
-
+// const navigate = useNavigate()
   // RTK Query hook لجلب بيانات الملف الشخصي للمستخدم
   // refetchOnMountOrArgChange: true يضمن إعادة جلب البيانات عند تحميل المكون أو تغيير الـ arguments
   // skip: false يضمن عدم تخطي الجلب
@@ -89,8 +87,7 @@ function App() {
           loader: authLoader,
           errorElement: <Err_404Page />,
           HydrateFallback: fetchingdataLoader,
-        }, // <--- إضافة الـ loader هنا أيضًا
-        // يمكنك أيضًا إضافة errorElement هنا لـ Profile إذا أردت معالجة الأخطاء الخاصة به
+        }, 
         {
           path: "edite/:id",
           element: <ProtectedRoute Component={Edite} />,
@@ -118,19 +115,19 @@ function App() {
           loader: authLoader,
           errorElement: <Err_404Page />,
           HydrateFallback: fetchingdataLoader,
-        }, // <--- إضافة الـ loader هنا أيضًا
+        }, 
         {
           path: "signin",
           Component: Signin,
           errorElement: <Err_404Page />,
           HydrateFallback: fetchingdataLoader,
-        }, // <--- إضافة الـ loader هنا أيضًا
+        }, 
         {
           path: "register",
           Component: SignUp,
           errorElement: <Err_404Page />,
           HydrateFallback: fetchingdataLoader,
-        }, // <--- إضافة الـ loader هنا أيضًا
+        }, 
         { path: "auth-success", Component: AuthSuccess }, // إضافة مسار AuthSuccess هنا
         { path: "*", Component: Err_404Page },
           // المسارات الجديدة لاسترداد كلمة المرور
@@ -142,7 +139,7 @@ function App() {
   ]);
   // <--- شاشة التحميل الأولية: تظهر أثناء التحقق من المصادقة الأولية
   if (isLoading) {
-    return <CustomLoader/>;
+    return <LoadingPage/>;
   }
 
   // بمجرد انتهاء التحميل الأولي، يتم عرض التطبيق بالكامل

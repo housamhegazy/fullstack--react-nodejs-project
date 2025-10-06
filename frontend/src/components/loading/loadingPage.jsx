@@ -1,7 +1,7 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 
 // شاشة تحميل كاملة تظهر أثناء انتظار الـ loader
-const CustomLoader = () => {
+const LoadingPage = () => {
   return (
     <Box
       sx={{
@@ -21,4 +21,4 @@ const CustomLoader = () => {
   );
 };
 
-export default CustomLoader;
+export default LoadingPage;

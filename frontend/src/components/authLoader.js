@@ -1,51 +1,59 @@
 //***********************ملاحظات هامه ********************** */
-// نعتمد بشكل اساسي على الريأكت هوك لحماية المسارات 
-// ونعتمد بشكل اساسي على ملف authSlice  للتحقق من حالة المستخدم في كل انحاء التطبيق 
-//   (RTK Query)ونعتمد بشكل اساسي على useGetUserProfileQuery للحصول على بيانات المستخدم والتعديل عليها 
+// نعتمد بشكل اساسي على الريأكت هوك لحماية المسارات
+// ونعتمد بشكل اساسي على ملف authSlice  للتحقق من حالة المستخدم في كل انحاء التطبيق
+//   (RTK Query)ونعتمد بشكل اساسي على useGetUserProfileQuery للحصول على بيانات المستخدم والتعديل عليها
 //***********************ملاحظات هامه ********************** */
 // utils/authLoader.js (ملف جديد يمكنك إنشاؤه)
 
-
-import { redirect } from 'react-router-dom';
-import { store } from '../Redux/store';
-import { userApi } from '../Redux/userApi';
-import { setAuthUser } from '../Redux/authSlice';
+import { redirect } from "react-router-dom";
+import { store } from "../Redux/store";
+import { userApi } from "../Redux/userApi";
+import { setAuthUser } from "../Redux/authSlice";
 
 // دالة مساعدة للتحقق من المصادقة
-const checkAuth = async () => {
-    try {
-        const result = await store.dispatch(
-            userApi.endpoints.getUserProfile.initiate(undefined, { forceRefetch: true })
-        ).unwrap();
-        return result;
-    } catch (error) {
-        throw redirect('/signin');
-    }
-};
-
+// const checkAuth = async () => {
+//   try {
+//     const result = await store
+//       .dispatch(
+//         userApi.endpoints.getUserProfile.initiate(undefined, {
+//           forceRefetch: true,
+//         })
+//       )
+//       .unwrap();
+//     return result;
+//   } catch (error) {
+//     throw redirect("/signin");
+//   }
+// };
 
 export const authLoader = async ({ request }) => {
-    try {
-        // إذا فشل هذا الطلب (يستجيب الخادم بـ 401 بعد تسجيل الخروج)
-        const result = await store.dispatch(
-            userApi.endpoints.getUserProfile.initiate(undefined, { forceRefetch: true })
-        ).unwrap();
-        
-        return result; 
-    } catch (error) {
-        // يتم إلقاء هذا الخطأ إذا فشل التحقق (أي تم تسجيل الخروج)
-        throw redirect('/signin'); 
+  try {
+    // إذا فشل هذا الطلب (يستجيب الخادم بـ 401 بعد تسجيل الخروج)
+    const queryResult = await store.dispatch(
+      userApi.endpoints.getUserProfile.initiate(undefined, {
+        forceRefetch: true,
+      })
+    );
+    if (queryResult.isError) {
+      throw redirect("/signin");
     }
-};
 
+    return queryResult.data;
+  } catch (error) { 
+    if (error.status === 401) {
+      throw redirect("/signin");
+    } else {
+      throw new Response("خطأ في الخادم أثناء المصادقة", { status: 500 });
+    }
+  }
+};
 
 // import { redirect } from "react-router-dom";
 // import axios from "axios"; // تأكد أن axios مستورد هنا أيضًا وأن `withCredentials` مضبوط
 
-
 // export const authLoader = async () => {
 //   try {
-//     const response = await axios.get("http://localhost:3000/api/profile",{withCredentials: true});  
+//     const response = await axios.get("http://localhost:3000/api/profile",{withCredentials: true});
 //     return response.data;
 //   } catch (error) {
 //     if (error.response && error.response.status === 401) {
@@ -59,7 +67,6 @@ export const authLoader = async ({ request }) => {
 //     throw new Error("Failed to load user profile in loader.");
 //   }
 // };
-
 
 // 2. Loader لمنع الوصول لصفحات Signin/Register
 // =========================================================

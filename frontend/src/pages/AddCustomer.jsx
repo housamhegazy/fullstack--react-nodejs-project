@@ -231,7 +231,6 @@ function AddCustomer() {
     const navigate = useNavigate(); // تهيئة useNavigate
     const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
 
-    const theme = useTheme();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",

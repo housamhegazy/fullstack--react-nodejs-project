@@ -108,11 +108,11 @@ const Customers = () => {
       </Box>
     );
   }
-if(loading){
-  return(<>
-    <LoadingPage/>
-  </>)
-}
+// if(loading){
+//   return(<>
+//     <LoadingPage/>
+//   </>)
+// }
   if(customers.length < 1){
     return (
       <Typography
