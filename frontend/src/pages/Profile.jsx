@@ -62,8 +62,12 @@ const Profile = () => {
           >
             <Avatar
               sx={{ width: 100, height: 100, bgcolor: "primary.main", mb: 2 }}
+              alt={user?user.fullName:""}
+            src= {user? user.avatar? user.avatar : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" :""}
+    
             >
-              <PersonIcon sx={{ fontSize: 60 }} />
+              
+              
             </Avatar>
             <Typography
               variant="h4"
