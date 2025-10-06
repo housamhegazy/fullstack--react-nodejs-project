@@ -29,7 +29,7 @@ import { useGetUserProfileQuery } from "./Redux/userApi";
 // <--- استيراد الـ loader الجديد
 import { authLoader } from "./components/authLoader"; // استيراد الـ loader لصفحة تسجيل الدخول
 import LoadingPage from "./components/loading/loadingPage";
-import fetchingdataLoader from "./components/loading/fetchingData";
+import FetchingdataLoader from "./components/loading/fetchingData";
 import ResetPassword from "./pages/reset-password/resetPassword";
 import ForgotPassword from "./pages/reset-password/forgetPassword";
 
@@ -40,6 +40,9 @@ const ProtectedRoute = ({ Component }) => (
 );
 
 function App() {
+  // في App.js
+const localTheme = localStorage.getItem("localTheme");
+const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "light" : "dark";
   const dispatch = useDispatch();
 // const navigate = useNavigate()
   // RTK Query hook لجلب بيانات الملف الشخصي للمستخدم
@@ -79,54 +82,54 @@ function App() {
           element: <ProtectedRoute Component={Customers} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader, // شاشة التحميل داخل الكومبوننت نفسه حتى لا تظهر شاشه بيضاء 
+          HydrateFallback: FetchingdataLoader, // شاشة التحميل داخل الكومبوننت نفسه حتى لا تظهر شاشه بيضاء 
         }, // <--- إضافة الـ loader هنا أيضًا
         {
           path: "profile",
           element: <ProtectedRoute Component={Profile} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         }, 
         {
           path: "edite/:id",
           element: <ProtectedRoute Component={Edite} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         },
         {
           path: "search",
           element: <ProtectedRoute Component={Search} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         },
         {
           path: "view/:id",
           element: <ProtectedRoute Component={View} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         },
         {
           path: "addCustomer",
           element: <ProtectedRoute Component={AddCustomer} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         }, 
         {
           path: "signin",
           Component: Signin,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         }, 
         {
           path: "register",
           Component: SignUp,
           errorElement: <Err_404Page />,
-          HydrateFallback: fetchingdataLoader,
+          HydrateFallback: FetchingdataLoader,
         }, 
         { path: "auth-success", Component: AuthSuccess }, // إضافة مسار AuthSuccess هنا
         { path: "*", Component: Err_404Page },
@@ -139,11 +142,11 @@ function App() {
   ]);
   // <--- شاشة التحميل الأولية: تظهر أثناء التحقق من المصادقة الأولية
   if (isLoading) {
-    return <LoadingPage/>;
+    return <LoadingPage mode={defaultMode}/>;
   }
 
   // بمجرد انتهاء التحميل الأولي، يتم عرض التطبيق بالكامل
 
-  return <RouterProvider router={router} fallbackElement={fetchingdataLoader} />;
+  return <RouterProvider router={router} fallbackElement={FetchingdataLoader} />;
 }
 export default App;

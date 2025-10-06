@@ -21,6 +21,8 @@ import { useGetUserProfileQuery } from "../Redux/userApi";
 import { useSelector } from "react-redux";
 import LoadingPage from "../components/loading/loadingPage";
 const Customers = () => {
+  const localTheme = localStorage.getItem("localTheme");
+const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "light" : "dark";
   //احضرت بيانات المستخدم حتى يتم ارسالها عند طلب عرض بيانات العملاء
   const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
       // const userData = useLoaderData(); 
@@ -110,7 +112,7 @@ const Customers = () => {
   }
 if(loading){
   return(<>
-    <LoadingPage/>
+    <LoadingPage mode={defaultMode}/>
   </>)
 }
   if(customers.length < 1){

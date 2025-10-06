@@ -1,8 +1,8 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
-import React from "react";
-
+import { useTheme } from "@mui/material/styles"; 
 // شاشة تحميل كاملة تظهر أثناء انتظار الـ loader
-const fetchingdataLoader = () => {
+const FetchingdataLoader = () => {
+  const theme = useTheme()
   return (
     <Box
       sx={{
@@ -11,8 +11,8 @@ const fetchingdataLoader = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        bgcolor: "background.default", 
-        color: "text.primary",
+      bgcolor: theme.palette.mode === "dark" ? "#001E3C" : "white", // تصحيح المقارنة
+        color: theme.palette.text.primary, // استخدام لون النص من الـ theme
       }}
     >
       <CircularProgress sx={{ mb: 2 }} color="primary" />
@@ -22,4 +22,4 @@ const fetchingdataLoader = () => {
   );
 };
 
-export default fetchingdataLoader;
+export default FetchingdataLoader;
