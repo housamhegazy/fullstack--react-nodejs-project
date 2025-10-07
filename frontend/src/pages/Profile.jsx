@@ -35,15 +35,16 @@ const Profile = () => {
   // @ts-ignore
   const authState = useSelector((state) => state.auth);
   const user = authState?.user; // <--- هنا بيانات المستخدم!
-  // const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
+  const isLoadingAuth = authState?.isLoadingAuth; // حالة التحقق الأولي من المصادقة
+
 
   // إذا لم يكن هناك مستخدم بعد التحميل وعدم وجود أخطاء
   const navigate = useNavigate();
   useEffect(() => {
-    if (!user) {
+    if (!user && !isLoadingAuth) {
       navigate("/signin", { replace: true });
     }
-  }, [navigate, user]);
+  }, [isLoadingAuth, navigate, user]);
 
   const localTheme = localStorage.getItem("localTheme");
   const defaultMode =

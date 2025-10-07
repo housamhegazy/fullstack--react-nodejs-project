@@ -55,7 +55,7 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
 
   // useEffect to call fetchcustomers when the component mounts
   useEffect(() => {
-    if (!user) {
+    if (!user && !isLoading) {
             navigate('/signin', { replace: true });
         }
     fetchcustomers();
