@@ -13,8 +13,11 @@ import {
 import LockResetIcon from "@mui/icons-material/LockReset";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useGetUserProfileQuery } from "../../Redux/userApi";
 
 function ForgotPassword() {
+    const { data: user, isLoading: userLoading, isError } = useGetUserProfileQuery(); // Fetch current user
+
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -116,8 +119,7 @@ function ForgotPassword() {
                     >
                         {loading ? <CircularProgress size={24} color="inherit" /> : "إرسال رابط إعادة التعيين"}
                     </Button>
-                    
-                    <Box display="flex" justifyContent="center">
+                    {!user && <Box display="flex" justifyContent="center">
                         <Link 
                             to="/signin" 
                             sx={{
@@ -130,7 +132,8 @@ function ForgotPassword() {
                         >
                             العودة لتسجيل الدخول
                         </Link>
-                    </Box>
+                    </Box>}
+                    
                 </Box>
             </Box>
         </Container>

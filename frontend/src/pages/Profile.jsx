@@ -10,7 +10,8 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  CircularProgress, // لعرض رسائل الخطأ
+  CircularProgress,
+  IconButton, // لعرض رسائل الخطأ
 } from "@mui/material";
 
 // استيراد أيقونات MUI (تأكد من تثبيت @mui/icons-material)
@@ -22,6 +23,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Edit } from "@mui/icons-material";
 
 const Profile = () => {
   // @ts-ignore
@@ -36,10 +38,24 @@ useEffect(()=>{
     navigate("/signin",{ replace: true })
   }
 },[navigate, user])
+
+const localTheme = localStorage.getItem("localTheme");
+const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "light" : "dark";
   if (user) {
     return (
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+        <IconButton
+          color={defaultMode == "dark" ? "secondary" : "primary"}
+          aria-label="edit profile"
+          onClick={()=>{
+            navigate("/editeprofile")
+          }}
+          sx={{ mb: 2 }}
+        >
+          <Edit />
+        </IconButton>
           <Box
             sx={{
               display: "flex",

@@ -26,7 +26,7 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
   //احضرت بيانات المستخدم حتى يتم ارسالها عند طلب عرض بيانات العملاء
   const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
       // const userData = useLoaderData(); 
-      const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+      // const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
   const navigate = useNavigate();
   const [customers, setcustomers] = useState([]); // State to store fetched customers
@@ -55,11 +55,11 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
 
   // useEffect to call fetchcustomers when the component mounts
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!user) {
             navigate('/signin', { replace: true });
         }
     fetchcustomers();
-  }, [isAuthenticated]); // Empty dependency array means this runs once on mount
+  }, []); // Empty dependency array means this runs once on mount
 
   // delete function
   const deleteFunc = async (id) => {

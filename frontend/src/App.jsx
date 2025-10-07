@@ -4,10 +4,7 @@
 //   (RTK Query)ونعتمد بشكل اساسي على useGetUserProfileQuery للحصول على بيانات المستخدم والتعديل عليها
 //***********************ملاحظات هامه ********************** */
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom"; // <--- هذا هو الاستيراد الصحيح والوحيد لحزمة التوجيه
+import { createBrowserRouter, RouterProvider } from "react-router-dom"; // <--- هذا هو الاستيراد الصحيح والوحيد لحزمة التوجيه
 import Profile from "./pages/Profile";
 import Customers from "./pages/Customers";
 import Edite from "./pages/Edite";
@@ -18,6 +15,7 @@ import Root from "./Root";
 import Err_404Page from "./pages/Err_404Page";
 import Signin from "./pages/signin";
 import SignUp from "./pages/register";
+import EditProfile from "./pages/editeProfile";
 import AuthSuccess from "./components/AuthSuccess";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -41,10 +39,12 @@ const ProtectedRoute = ({ Component }) => (
 
 function App() {
   // في App.js
-const localTheme = localStorage.getItem("localTheme");
-const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "light" : "dark";
+  const localTheme = localStorage.getItem("localTheme");
+  const defaultMode =
+    localTheme === null ? "light" : localTheme === "light" ? "light" : "dark";
+
   const dispatch = useDispatch();
-// const navigate = useNavigate()
+  // const navigate = useNavigate()
   // RTK Query hook لجلب بيانات الملف الشخصي للمستخدم
   // refetchOnMountOrArgChange: true يضمن إعادة جلب البيانات عند تحميل المكون أو تغيير الـ arguments
   // skip: false يضمن عدم تخطي الجلب
@@ -70,8 +70,6 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
     }
   }, [userProfile, isLoading, isSuccess, isError, dispatch]);
 
-
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -82,7 +80,7 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
           element: <ProtectedRoute Component={Customers} />,
           loader: authLoader,
           errorElement: <Err_404Page />,
-          HydrateFallback: FetchingdataLoader, // شاشة التحميل داخل الكومبوننت نفسه حتى لا تظهر شاشه بيضاء 
+          HydrateFallback: FetchingdataLoader, // شاشة التحميل داخل الكومبوننت نفسه حتى لا تظهر شاشه بيضاء
         }, // <--- إضافة الـ loader هنا أيضًا
         {
           path: "profile",
@@ -90,7 +88,7 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
           loader: authLoader,
           errorElement: <Err_404Page />,
           HydrateFallback: FetchingdataLoader,
-        }, 
+        },
         {
           path: "edite/:id",
           element: <ProtectedRoute Component={Edite} />,
@@ -118,35 +116,45 @@ const defaultMode = localTheme === null ? "light" : localTheme === "light" ? "li
           loader: authLoader,
           errorElement: <Err_404Page />,
           HydrateFallback: FetchingdataLoader,
-        }, 
+        },
+
+        {
+          path: "editeprofile",
+          element: <ProtectedRoute Component={EditProfile} />,
+          loader: authLoader,
+          errorElement: <Err_404Page />,
+          HydrateFallback: FetchingdataLoader,
+        },
         {
           path: "signin",
           Component: Signin,
           errorElement: <Err_404Page />,
           HydrateFallback: FetchingdataLoader,
-        }, 
+        },
         {
           path: "register",
           Component: SignUp,
           errorElement: <Err_404Page />,
           HydrateFallback: FetchingdataLoader,
-        }, 
+        },
         { path: "auth-success", Component: AuthSuccess }, // إضافة مسار AuthSuccess هنا
         { path: "*", Component: Err_404Page },
-          // المسارات الجديدة لاسترداد كلمة المرور
-            { path: "forgot-password", Component: ForgotPassword }, // لطلب الإيميل
-            { path: "reset-password/:token", Component: ResetPassword }, // لإعادة تعيين كلمة المرور
-            // ...
+        // المسارات الجديدة لاسترداد كلمة المرور
+        { path: "forgot-password", Component: ForgotPassword }, // لطلب الإيميل
+        { path: "reset-password/:token", Component: ResetPassword }, // لإعادة تعيين كلمة المرور
+        // ...
       ],
     },
   ]);
   // <--- شاشة التحميل الأولية: تظهر أثناء التحقق من المصادقة الأولية
   if (isLoading) {
-    return <LoadingPage mode={defaultMode}/>;
+    return <LoadingPage mode={defaultMode} />;
   }
 
   // بمجرد انتهاء التحميل الأولي، يتم عرض التطبيق بالكامل
 
-  return <RouterProvider router={router} fallbackElement={FetchingdataLoader} />;
+  return (
+    <RouterProvider router={router} fallbackElement={FetchingdataLoader} />
+  );
 }
 export default App;
