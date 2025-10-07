@@ -2,12 +2,10 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/userModel");
 const { upload, cloudinary } = require("../config/cloudinaryConfig"); // Import multer config
-const isAuthenticated = require("../middleware/authMiddleware"); // Your auth middleware
 
 // PUT route to update user profile (name, email, image)
 router.put(
   "/update-profile",
-  isAuthenticated,
   upload.single("avatar"),
   async (req, res) => {
     try {
@@ -18,12 +16,14 @@ router.put(
       if (!fullName || !email) {
         return res.status(400).json({ message: "All fields are required" });
       }
-
+    
       // Check if email is already taken by another user
       const existingUser = await User.findOne({ email, _id: { $ne: userId } });
       if (existingUser) {
         return res.status(400).json({ message: "Email already in use" });
+        
       }
+        
 
       // Prepare update object
       const updateData = {

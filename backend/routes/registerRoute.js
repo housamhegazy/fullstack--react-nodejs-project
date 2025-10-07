@@ -42,7 +42,7 @@ router.post("", async (req, res) => {
         .json({ message: "this email already registered!" });
     }
 
-    const newUser = new UserSchema({ fullName, email, password });
+    const newUser = new UserSchema({ fullName, email, password ,providers: ["local"],});
     await newUser.save();
     //لتخزين بيانات الجلسه حتى لا اضطر لتسجيل الدخول حين الانتقال من صفحه لاخرى
     if (req.session) {

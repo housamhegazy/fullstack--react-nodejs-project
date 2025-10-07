@@ -13,11 +13,12 @@ import {
 import LockResetIcon from "@mui/icons-material/LockReset";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useGetUserProfileQuery } from "../../Redux/userApi";
+import { useSelector } from "react-redux";
 
 function ForgotPassword() {
-    const { data: user, isLoading: userLoading, isError } = useGetUserProfileQuery(); // Fetch current user
-
+// التحقق من حالة المصادقة من Redux
+    const authState = useSelector((state) => state.auth);
+    const isAuthenticated = authState?.isAuthenticated || false; // افتراض أن state.auth يحتوي على isAuthenticated
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -119,7 +120,7 @@ function ForgotPassword() {
                     >
                         {loading ? <CircularProgress size={24} color="inherit" /> : "إرسال رابط إعادة التعيين"}
                     </Button>
-                    {!user && <Box display="flex" justifyContent="center">
+                    {!isAuthenticated && <Box display="flex" justifyContent="center">
                         <Link 
                             to="/signin" 
                             sx={{

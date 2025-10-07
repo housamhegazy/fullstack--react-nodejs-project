@@ -26,6 +26,7 @@ function ResetPassword() {
   useEffect(() => {
     // التحقق من صلاحية الرمز المميز عند تحميل الصفحة
     const verifyToken = async () => {
+      
       if (!token) {
         setError("الرمز المميز مفقود.");
         return;
@@ -65,12 +66,15 @@ function ResetPassword() {
 
     try {
       // إرسال كلمة المرور الجديدة إلى الخادم
-      await axios.post(
-        `http://localhost:3000/api/reset-password/${token}`,
-        { password }
-      );
+      await axios.post(`http://localhost:3000/api/reset-password/${token}`, {
+        password,
+      });
       setSuccess("تمت إعادة تعيين كلمة المرور بنجاح.");
-      setTimeout(() => navigate("/signin"), 2000); // إعادة التوجيه لصفحة تسجيل الدخول
+      if (isTokenValid) {
+        return
+      } else {
+        setTimeout(() => navigate("/signin"), 2000); // إعادة التوجيه لصفحة تسجيل الدخول
+      }
     } catch (err) {
       console.error("Password reset error:", err);
       setError(
@@ -105,52 +109,64 @@ function ResetPassword() {
 
         {loading ? (
           <CircularProgress />
-        ) : error ? (
-          <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
-            {error}
-          </Alert>
         ) : (
-          <>
-            <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
-              أدخل كلمة مرور جديدة لحسابك.
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: "100%" }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="كلمة المرور الجديدة"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="تأكيد كلمة المرور الجديدة"
-                type="password"
-                id="confirmPassword"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                disabled={loading}
-              >
-                إعادة تعيين كلمة المرور
-              </Button>
-            </Box>
-          </>
+          error && (
+            <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
+              {error}
+            </Alert>
+          )
         )}
+        {success && <Alert severity="success">{success}</Alert>}
+        <>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ mb: 3 }}
+          >
+            أدخل كلمة مرور جديدة لحسابك.
+          </Typography>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1, width: "100%" }}
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="كلمة المرور الجديدة"
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="confirmPassword"
+              label="تأكيد كلمة المرور الجديدة"
+              type="password"
+              id="confirmPassword"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
+            >
+              إعادة تعيين كلمة المرور
+            </Button>
+          </Box>
+        </>
       </Box>
     </Container>
   );

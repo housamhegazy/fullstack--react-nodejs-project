@@ -19,11 +19,13 @@ const UserSchema = new mongoose.Schema(
       unique: true, // يجب أن يكون فريدًا
       sparse: true, // يسمح بوجود العديد من المستخدمين الذين لا يملكون هذا الحقل
     },
+    
     xId: {
       type: String,
       unique: true,
       sparse: true,
     },
+    providers: [{ type: String, enum: ['local', 'google', 'facebook', 'twitter'], default: ['local'] }], // مصفوفة للمزودين,
     avatar: {
       type: String,
     },

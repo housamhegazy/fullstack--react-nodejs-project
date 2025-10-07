@@ -77,7 +77,7 @@ app.use("/api/signout", signoutRoute);
 app.use("", authRoute);
 app.use("/api/forgot-password", forgotPasswordRoute); // <--- إضافة هذا
 app.use("/api/reset-password", resetPasswordRoute); // <--- إضافة هذا
-app.use('/api/users', updateUserRoute); 
+app.use('/api/users',  isAuthenticated, updateUserRoute); 
 
 app.use("/api/profile", isAuthenticated, getUserRoute);
 app.use("", isAuthenticated, allRoutes);
